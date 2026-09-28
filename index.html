@@ -24,6 +24,7 @@
   --bg: #0B0B0A;
   --ink: #F4F4F1;
   --mute: #8C8C86;
+  --soft: #C9C9C3;
   --line: rgb(244 244 241 / .14);
   --raise: #161615;
   --r: 4px;
@@ -78,7 +79,7 @@ bdi.d, .mono { font-family: var(--mono); font-weight: 400; }
 @media (min-width: 768px) { .hero h1 span { white-space: nowrap; } }
 .hero h1 span { display: block; }
 .hero h1 .dim { color: var(--mute); }
-.hero p { font-size: 1.15rem; color: #c9c9c3; max-width: 34ch; }
+.hero p { font-size: 1.15rem; color: var(--soft); max-width: 34ch; }
 .ctas { display: flex; flex-wrap: wrap; gap: .75rem; }
 .reel { grid-column: 6 / -1; margin: 0; }
 .reel video { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: var(--r); background: var(--raise); }
@@ -89,7 +90,7 @@ bdi.d, .mono { font-family: var(--mono); font-weight: 400; }
 section { padding-block: clamp(5rem, 12vw, 10rem) 0; }
 .head { display: grid; gap: 1rem; margin-block-end: clamp(2.5rem, 5vw, 4rem); max-width: 52rem; }
 .head h2 { font-size: clamp(2.4rem, 5.6vw, 5.5rem); }
-.head p { text-wrap: pretty; font-size: 1.15rem; color: #c9c9c3; max-width: 46ch; }
+.head p { text-wrap: pretty; font-size: 1.15rem; color: var(--soft); max-width: 46ch; }
 
 /* Tamwil */
 .tamwil { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3rem var(--gut); align-items: start; }
@@ -140,12 +141,12 @@ section { padding-block: clamp(5rem, 12vw, 10rem) 0; }
 .way { list-style: none; margin: 0; padding: 0; }
 .way li { display: grid; grid-template-columns: 4fr 8fr; gap: var(--gut); padding-block: 2rem; border-block-start: 1px solid var(--line); }
 .way b { font-weight: 800; font-size: clamp(1.4rem, 2.6vw, 2.2rem); line-height: 1.4; }
-.way span { color: #c9c9c3; font-size: 1.1rem; max-width: 50ch; padding-block-start: .4rem; }
+.way span { color: var(--soft); font-size: 1.1rem; max-width: 50ch; padding-block-start: .4rem; }
 
 /* Contact */
 .contact { padding-block: clamp(6rem, 14vw, 12rem) clamp(3rem, 6vw, 5rem); }
 .contact h2 { font-size: clamp(4rem, 13vw, 12rem); line-height: 1.3; }
-.contact p { font-size: 1.2rem; color: #c9c9c3; margin-block: 3rem; max-width: 40ch; }
+.contact p { font-size: 1.2rem; color: var(--soft); margin-block: 3rem; max-width: 40ch; }
 .lines { display: grid; gap: 1rem; }
 .lines a { display: flex; align-items: center; gap: 1rem; width: fit-content; text-decoration: none; font-size: clamp(1.4rem, 3.4vw, 2.8rem); font-weight: 500; border-block-end: 1px solid var(--line); padding-block-end: .4rem; transition: border-color .25s; }
 .lines a:hover { border-color: var(--ink); }

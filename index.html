@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>فيصل فهد المطيري · مواقع وأنظمة للأنشطة في الرياض</title>
+<meta name="description" content="مطوّر من الرياض: مواقع للأنشطة، وأنظمة تذكّر العملاء بمدفوعاتهم عبر واتساب وتحصّلها. شوف الأعمال وراسلني.">
+<meta name="author" content="فيصل فهد المطيري">
+<meta name="theme-color" content="#0B0B0A">
+<meta property="og:title" content="فيصل فهد المطيري · مواقع وأنظمة للأنشطة">
+<meta property="og:description" content="مواقع تجيب الزباين، وأنظمة تشتغل عنك.">
+<meta property="og:image" content="https://faisalmt3.github.io/assets/reel-poster.webp">
+<meta property="og:locale" content="ar_SA">
+<link rel="preload" href="assets/fonts/alexandria-ar.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/reel-poster.webp" as="image">
+<style>
+@font-face { font-family: "Alexandria"; src: url(assets/fonts/alexandria-ar.woff2) format("woff2"); font-weight: 300 900; font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC; }
+@font-face { font-family: "Alexandria"; src: url(assets/fonts/alexandria-lat.woff2) format("woff2"); font-weight: 300 900; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "JetBrains Mono"; src: url(assets/fonts/jbmono-lat.woff2) format("woff2"); font-weight: 400 500; font-display: swap; }
+
+:root {
+  --bg: #0B0B0A;
+  --ink: #F4F4F1;
+  --mute: #8C8C86;
+  --line: rgb(244 244 241 / .14);
+  --raise: #161615;
+  --r: 4px;
+  --gut: clamp(1.25rem, 4vw, 4rem);
+  --max: 1440px;
+  --sans: "Alexandria", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  --tile-h: clamp(300px, 32vw, 500px);
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { background: var(--bg); color: var(--ink); scroll-behavior: smooth; scrollbar-color: #3a3a37 var(--bg); }
+body { margin: 0; font: 300 1.0625rem/1.8 var(--sans); overflow-x: clip; -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { font: inherit; }
+img, video { display: block; max-width: 100%; height: auto; }
+a { color: inherit; text-underline-offset: .3em; text-decoration-thickness: 1px; }
+::selection { background: var(--ink); color: var(--bg); }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: var(--r); }
+h1, h2, h3, p { margin: 0; }
+h1, h2 { font-weight: 900; line-height: 1.25; text-wrap: balance; }
+bdi { white-space: nowrap; }
+bdi.d, .mono { font-family: var(--mono); font-weight: 400; }
+.wrap { width: min(100% - 2 * var(--gut), var(--max)); margin-inline: auto; }
+.icon { width: 1.25em; height: 1.25em; flex: none; }
+.skip { position: absolute; inset-inline-start: var(--gut); top: -4rem; z-index: 30; background: var(--ink); color: var(--bg); padding: .5rem 1rem; border-radius: var(--r); }
+.skip:focus { top: 1rem; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; gap: .6rem; min-height: 48px; padding: .7rem 1.4rem; border-radius: var(--r);
+  font-weight: 600; text-decoration: none; border: 1px solid var(--ink); transition: background .25s var(--ease), color .25s var(--ease), transform .15s var(--ease); }
+.btn-solid { background: var(--ink); color: var(--bg); }
+.btn-solid:hover { background: transparent; color: var(--ink); }
+.btn-line { color: var(--ink); border-color: var(--line); }
+.btn-line:hover { border-color: var(--ink); }
+.btn:active { transform: translateY(1px) scale(.98); }
+
+/* Nav */
+.nav { position: sticky; top: 0; z-index: 20; background: rgb(11 11 10 / .92); border-block-end: 1px solid var(--line); }
+.nav .wrap { display: flex; align-items: center; gap: 2rem; min-height: 72px; }
+.brand { font-weight: 800; font-size: 1.05rem; text-decoration: none; white-space: nowrap; }
+.nav ul { display: flex; gap: 1.75rem; list-style: none; margin: 0; padding: 0; margin-inline-start: auto; }
+.nav ul a { text-decoration: none; color: var(--mute); transition: color .2s; }
+.nav ul a:hover { color: var(--ink); }
+.nav .btn { min-height: 44px; padding: .5rem 1.1rem; }
+
+/* Hero */
+.hero { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2rem var(--gut); align-items: start; padding-block: clamp(2.5rem, 6vh, 5rem) clamp(1rem, 3vh, 2rem); }
+.hero h1 { grid-column: 1 / -1; }
+.hero-copy { grid-column: 1 / span 5; align-self: start; display: grid; gap: 1.75rem; }
+.hero h1 { font-size: clamp(2.2rem, 6vw, 6rem); line-height: 1.35; }
+@media (min-width: 768px) { .hero h1 span { white-space: nowrap; } }
+.hero h1 span { display: block; }
+.hero h1 .dim { color: var(--mute); }
+.hero p { font-size: 1.15rem; color: #c9c9c3; max-width: 34ch; }
+.ctas { display: flex; flex-wrap: wrap; gap: .75rem; }
+.reel { grid-column: 6 / -1; margin: 0; }
+.reel video { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: var(--r); background: var(--raise); }
+.reel figcaption { display: flex; justify-content: space-between; gap: 1rem; margin-block-start: .9rem; font-size: .95rem; color: var(--mute); min-height: 1.8em; }
+.reel figcaption b { color: var(--ink); font-weight: 500; }
+
+/* Section rhythm */
+section { padding-block: clamp(5rem, 12vw, 10rem) 0; }
+.head { display: grid; gap: 1rem; margin-block-end: clamp(2.5rem, 5vw, 4rem); max-width: 52rem; }
+.head h2 { font-size: clamp(2.4rem, 5.6vw, 5.5rem); }
+.head p { text-wrap: pretty; font-size: 1.15rem; color: #c9c9c3; max-width: 46ch; }
+
+/* Tamwil */
+.tamwil { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3rem var(--gut); align-items: start; }
+.tamwil .head { grid-column: 1 / -1; margin: 0; }
+.stage { grid-column: 5 / -1; grid-row: 2 / span 2; position: relative; padding-block-end: 6rem; }
+.stage .desk { border-radius: var(--r); box-shadow: 0 30px 80px -20px rgb(0 0 0 / .8); }
+.stage .phone { position: absolute; inset-inline-end: -1rem; bottom: 0; width: 22%; border-radius: var(--r); outline: 1px solid var(--line); box-shadow: 0 30px 60px -10px rgb(0 0 0 / .9); }
+.facts { grid-column: 1 / span 4; grid-row: 2; list-style: none; margin: 0; padding: 0; }
+.facts li { text-wrap: pretty; padding-block: 1.1rem; border-block-start: 1px solid var(--line); font-size: 1.05rem; }
+.facts li:last-child { border-block-end: 1px solid var(--line); }
+.tamwil-foot { grid-column: 1 / span 4; grid-row: 3; display: grid; gap: 1.25rem; align-content: start; }
+.note { font-size: .9rem; color: var(--mute); }
+
+/* WhatsApp workflow */
+.canvas { border-radius: var(--r); overflow: hidden; }
+.canvas img { width: 100%; }
+.swipe { display: none; }
+.track { list-style: none; margin: 0; padding: 2.5rem 0 0; display: grid; grid-template-columns: repeat(5, 1fr); position: relative; }
+.track::before { content: ""; position: absolute; inset-inline: 0; top: 2.5rem; border-block-start: 1px solid var(--line); }
+.track li { position: relative; padding-block-start: 1.5rem; padding-inline-end: 1rem; }
+.track li::before { content: ""; position: absolute; top: -5px; inset-inline-start: 0; width: 9px; height: 9px; background: var(--ink); border-radius: 50%; }
+.track b { display: block; font-weight: 800; font-size: clamp(1.1rem, 1.8vw, 1.5rem); line-height: 1.4; }
+.track span { color: var(--mute); font-size: .95rem; }
+.wa-split { display: grid; grid-template-columns: 5fr 7fr; gap: var(--gut); margin-block-start: clamp(3rem, 6vw, 5rem); align-items: start; }
+.msg { margin: 0; padding: 1.5rem 1.75rem; background: var(--raise); border-radius: var(--r); border: 1px solid var(--line); }
+.msg p { font-size: 1.1rem; line-height: 1.9; }
+.msg footer { margin-block-start: 1rem; font-size: .85rem; color: var(--mute); }
+.rules { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.5rem; }
+.rules li { font-size: clamp(1.25rem, 2.2vw, 1.9rem); font-weight: 700; line-height: 1.5; }
+.rules li span { display: block; font-size: 1rem; font-weight: 300; color: var(--mute); }
+
+/* Concepts */
+.grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: clamp(2.5rem, 4vw, 3.5rem) clamp(1rem, 2vw, 1.75rem); }
+.tile { grid-column: span 4; text-decoration: none; display: grid; gap: 1rem; }
+.tile.w7 { grid-column: span 7; } .tile.w5 { grid-column: span 5; } .tile.w6 { grid-column: span 6; }
+.frame { height: var(--tile-h); overflow: hidden; border-radius: var(--r); background: var(--raise); outline: 1px solid var(--line); outline-offset: -1px; }
+.frame img { width: 100%; transform: translateY(0); transition: transform 1s var(--ease); }
+.tile:hover .frame img, .tile:focus-visible .frame img, .tile.play .frame img { transform: translateY(calc(-100% + var(--tile-h))); transition: transform 7s cubic-bezier(.45, 0, .55, 1); }
+.tile:focus-visible { outline: none; }
+.tile:focus-visible .frame { outline: 2px solid var(--ink); outline-offset: 3px; }
+.cap { display: flex; justify-content: space-between; align-items: start; gap: 1rem; }
+.cap h3 { font-weight: 800; font-size: 1.3rem; line-height: 1.5; }
+.cap p { color: var(--mute); font-size: .95rem; }
+.cap .go { flex: none; display: inline-flex; align-items: center; gap: .4rem; font-size: .9rem; color: var(--mute); padding-block-start: .3rem; transition: color .2s; }
+.tile:hover .go { color: var(--ink); }
+
+/* Way of working */
+.way { list-style: none; margin: 0; padding: 0; }
+.way li { display: grid; grid-template-columns: 4fr 8fr; gap: var(--gut); padding-block: 2rem; border-block-start: 1px solid var(--line); }
+.way b { font-weight: 800; font-size: clamp(1.4rem, 2.6vw, 2.2rem); line-height: 1.4; }
+.way span { color: #c9c9c3; font-size: 1.1rem; max-width: 50ch; padding-block-start: .4rem; }
+
+/* Contact */
+.contact { padding-block: clamp(6rem, 14vw, 12rem) clamp(3rem, 6vw, 5rem); }
+.contact h2 { font-size: clamp(4rem, 13vw, 12rem); line-height: 1.3; }
+.contact p { font-size: 1.2rem; color: #c9c9c3; margin-block: 3rem; max-width: 40ch; }
+.lines { display: grid; gap: 1rem; }
+.lines a { display: flex; align-items: center; gap: 1rem; width: fit-content; text-decoration: none; font-size: clamp(1.4rem, 3.4vw, 2.8rem); font-weight: 500; border-block-end: 1px solid var(--line); padding-block-end: .4rem; transition: border-color .25s; }
+.lines a:hover { border-color: var(--ink); }
+.lines .icon { width: .9em; height: .9em; color: var(--mute); }
+.foot { border-block-start: 1px solid var(--line); padding-block: 2rem; color: var(--mute); font-size: .9rem; }
+
+@media (max-width: 1024px) {
+  .hero-copy, .reel { grid-column: 1 / -1; }
+  .hero p { max-width: 44ch; }
+  .stage, .facts, .tamwil-foot { grid-column: 1 / -1; grid-row: auto; }
+  .stage { padding-block-end: 4rem; }
+  .tile, .tile.w7, .tile.w5, .tile.w6 { grid-column: span 6; }
+}
+@media (max-width: 767px) {
+  body { font-size: 1rem; }
+  .hero h1 { font-size: clamp(1.7rem, 7.4vw, 2.6rem); }
+  .nav ul { display: none; }
+  .nav .wrap { justify-content: space-between; }
+  .reel figcaption { flex-direction: column; gap: 0; }
+  .stage .phone { width: 30%; inset-inline-end: 0; }
+  .ctas .btn { flex: 1 1 100%; justify-content: center; }
+  .canvas { overflow-x: auto; scrollbar-width: thin; }
+  .canvas img { width: 1000px; max-width: none; }
+  .swipe { display: block; margin-block-start: .6rem; font-size: .9rem; color: var(--mute); }
+  .stage { padding-block-end: 3rem; }
+  .lines a { font-size: 1.15rem; }
+  .track { grid-template-columns: 1fr; padding-block-start: 0; gap: 1.25rem; }
+  .track::before { inset-inline: auto; inset-inline-start: 4px; top: .5rem; bottom: .5rem; border-block-start: 0; border-inline-start: 1px solid var(--line); }
+  .track li { padding-block-start: 0; padding-inline-start: 2rem; }
+  .track li::before { top: .55rem; }
+  .wa-split, .way li { grid-template-columns: 1fr; }
+  .way li { gap: .5rem; }
+  .tile, .tile.w7, .tile.w5, .tile.w6 { grid-column: 1 / -1; }
+  :root { --tile-h: 72vw; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .frame img, .tile:hover .frame img, .tile:focus-visible .frame img, .tile.play .frame img { transform: none; transition: none; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-wa" viewBox="0 0 256 256"><path fill="currentColor" d="M187.58,144.84l-32-16a8,8,0,0,0-8,.5l-14.69,9.8a40.55,40.55,0,0,1-16-16l9.8-14.69a8,8,0,0,0,.5-8l-16-32A8,8,0,0,0,104,64a40,40,0,0,0-40,40,88.1,88.1,0,0,0,88,88,40,40,0,0,0,40-40A8,8,0,0,0,187.58,144.84ZM152,176a72.08,72.08,0,0,1-72-72A24,24,0,0,1,99.29,80.46l11.48,23L101,118a8,8,0,0,0-.73,7.51,56.47,56.47,0,0,0,30.15,30.15A8,8,0,0,0,138,155l14.61-9.74,23,11.48A24,24,0,0,1,152,176ZM128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a87.87,87.87,0,0,1-44.06-11.81,8,8,0,0,0-6.54-.67L40,216,52.47,178.6a8,8,0,0,0-.66-6.54A88,88,0,1,1,128,216Z"/></symbol>
+  <symbol id="i-out" viewBox="0 0 256 256"><path fill="currentColor" d="M197.66,197.66a8,8,0,0,1-11.32,0L72,83.31V168a8,8,0,0,1-16,0V64a8,8,0,0,1,8-8H168a8,8,0,0,1,0,16H83.31L197.66,186.34A8,8,0,0,1,197.66,197.66Z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 256 256"><path fill="currentColor" d="M224,48H32a8,8,0,0,0-8,8V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A8,8,0,0,0,224,48ZM203.43,64,128,133.15,52.57,64ZM216,192H40V74.19l82.59,75.71a8,8,0,0,0,10.82,0L216,74.19V192Z"/></symbol>
+  <symbol id="i-down" viewBox="0 0 256 256"><path fill="currentColor" d="M205.66,149.66l-72,72a8,8,0,0,1-11.32,0l-72-72a8,8,0,0,1,11.32-11.32L120,196.69V40a8,8,0,0,1,16,0V196.69l58.34-58.35a8,8,0,0,1,11.32,11.32Z"/></symbol>
+</svg>
+<a class="skip" href="#main">تخطَّ إلى المحتوى</a>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top">فيصل فهد المطيري</a>
+    <ul>
+      <li><a href="#tamwil">تمويل بلس</a></li>
+      <li><a href="#whatsapp">أتمتة واتساب</a></li>
+      <li><a href="#concepts">التصاميم</a></li>
+    </ul>
+    <a class="btn btn-solid" href="https://wa.me/966549978811"><svg class="icon" aria-hidden="true"><use href="#i-wa"/></svg>واتساب</a>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap hero" id="top">
+    <h1><span>مواقع تجيب الزباين،</span> <span class="dim">وأنظمة تشتغل عنك.</span></h1>
+    <div class="hero-copy">
+      <p>أنا فيصل، مطوّر من الرياض. أصمم مواقع للأنشطة، وأبني أنظمة تذكّر عملاءك بمدفوعاتهم وتحصّلها تلقائيًا.</p>
+      <div class="ctas">
+        <a class="btn btn-solid" href="https://wa.me/966549978811"><svg class="icon" aria-hidden="true"><use href="#i-wa"/></svg>راسلني واتساب</a>
+        <a class="btn btn-line" href="#tamwil">شوف الأعمال<svg class="icon" aria-hidden="true"><use href="#i-down"/></svg></a>
+      </div>
+    </div>
+    <figure class="reel">
+      <video id="reel" autoplay muted loop playsinline preload="auto" poster="assets/reel-poster.webp" aria-label="عرض سريع لمواقع وأنظمة من أعمالي">
+        <source src="assets/reel-800.mp4" type="video/mp4" media="(max-width: 800px)">
+        <source src="assets/reel-1280.mp4" type="video/mp4">
+      </video>
+      <figcaption aria-live="off"><b id="reel-name">قصر الرياض للاحتفالات</b><span id="reel-kind">تصميم مقترح: قاعة أفراح</span></figcaption>
+    </figure>
+  </div>
+
+  <section id="tamwil" aria-labelledby="tamwil-h">
+    <div class="wrap tamwil">
+      <div class="head">
+        <h2 id="tamwil-h">تمويل بلس</h2>
+        <p>نظام سعودي لإدارة البيع بالتقسيط طوّرته، ويعمل فعليًا. المعرض يسجّل العقد، والنظام يتابع الأقساط ويذكّر ويحصّل.</p>
+      </div>
+      <div class="stage">
+        <img class="desk" src="assets/work/tamwil-dashboard.webp" width="1440" height="900" loading="lazy" alt="لوحة تحكم المعرض في تمويل بلس: الأقساط المتأخرة وتحصيل الشهر">
+        <img class="phone" src="assets/work/tamwil-portal.webp" width="585" height="1266" loading="lazy" alt="بوابة العميل على الجوال: القسط المتأخر وزر السداد">
+      </div>
+      <ul class="facts">
+        <li>يذكّر العملاء بأقساطهم عبر واتساب، من رقم المعرض نفسه.</li>
+        <li>دفع إلكتروني عبر ميسّر و<bdi>Tap</bdi>، وتتحدث حالة القسط تلقائيًا.</li>
+        <li>بوابة للعميل يشوف فيها أقساطه ويسدّد المتأخر.</li>
+        <li>لوحة تحكم بصلاحيات للمالك والموظفين.</li>
+        <li>استيراد البيانات القديمة من <bdi>Excel</bdi>، ونسخة أندرويد.</li>
+      </ul>
+      <div class="tamwil-foot">
+        <a class="btn btn-line" href="https://tamwil.pages.dev" target="_blank" rel="noopener">زُر الموقع<svg class="icon" aria-hidden="true"><use href="#i-out"/></svg></a>
+        <p class="note">اللقطات ببيانات تجريبية، لأن النظام يحمل بيانات عملاء حقيقية.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="whatsapp" aria-labelledby="wa-h">
+    <div class="wrap">
+      <div class="head">
+        <h2 id="wa-h">تذكير المدفوعات بواتساب</h2>
+        <p>كل يوم الساعة 9 الصبح يقرأ جدول المدفوعات، ويرسل لكل عميل الرسالة المناسبة لموعده. الأدوات: <bdi>n8n</bdi>، و<bdi>Google Sheets</bdi>، وواتساب للأعمال.</p>
+      </div>
+      <div class="canvas" dir="ltr" tabindex="0" role="region" aria-label="مخطط سير العمل، اسحب لرؤيته كاملًا"><picture><source media="(max-width: 767px)" srcset="assets/work/workflow-m.webp" width="1200" height="367"><img src="assets/work/workflow.webp" width="1600" height="697" loading="lazy" alt="مخطط سير العمل في n8n: قراءة المدفوعات، التصنيف، إرسال تذكير واتساب، ثم تسجيل الإرسال في الجدول"></picture></div>
+      <p class="swipe" aria-hidden="true">اسحب المخطط لتشوفه كامل</p>
+      <ol class="track" aria-label="مواعيد التذكير">
+        <li><b>قبل الموعد بـ 3 أيام</b><span>تذكير بالدفعة القادمة</span></li>
+        <li><b>يوم الاستحقاق</b><span>الدفعة مستحقة اليوم</span></li>
+        <li><b>تأخر يوم</b><span>أول تنبيه بالتأخر</span></li>
+        <li><b>بعد 7 أيام</b><span>تنبيه ثانٍ</span></li>
+        <li><b>بعد 14 يومًا</b><span>تنبيه أخير</span></li>
+      </ol>
+      <div class="wa-split">
+        <blockquote class="msg">
+          <p>مرحبًا عبدالله، نذكّرك بأن دفعتك بمبلغ <bdi>1,200</bdi> ريال تستحق بتاريخ <bdi dir="ltr">2026-10-01</bdi>. شكرًا لتعاملك معنا.</p>
+          <footer>مثال على رسالة التذكير قبل الموعد</footer>
+        </blockquote>
+        <ul class="rules">
+          <li>ما تتكرر الرسالة.<span>نفس العميل ما يوصله نفس التذكير مرتين، حتى لو اشتغل النظام أكثر من مرة.</span></li>
+          <li>ما يفوته يوم.<span>إذا توقف النظام يوم، يرسل الرسالة الفائتة في اليوم اللي بعده.</span></li>
+          <li>كلمة وحدة توقفه.<span>تكتب «مدفوع» في الجدول، وتوقف التذكيرات لهذا العميل.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="concepts" aria-labelledby="concepts-h">
+    <div class="wrap">
+      <div class="head">
+        <h2 id="concepts-h">تصاميم لأنشطة في الرياض</h2>
+        <p>صممت هذه المواقع من نفسي لأنشطة حقيقية، عشان أوريهم كيف ممكن يكون موقعهم. هي تصاميم مقترحة، مو أعمال مدفوعة. مرّر على أي تصميم وشوف الصفحة كاملة.</p>
+      </div>
+      <div class="grid" id="tiles"></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="way-h">
+    <div class="wrap">
+      <div class="head"><h2 id="way-h">طريقة الشغل</h2></div>
+      <ul class="way">
+        <li><b>الاتفاق مكتوب.</b><span>السعر والمدة ونطاق العمل نحددها كتابيًا قبل البدء، وما في مفاجآت بعدين.</span></li>
+        <li><b>أختبر قبل التسليم.</b><span>أجرّب كل شيء على الجوال والكمبيوتر بنفسي، وأسلّمك شيئًا شغّالًا.</span></li>
+        <li><b>أتحمّل النتيجة.</b><span>أستخدم أدوات الذكاء الاصطناعي في التطوير، والمسؤولية عن النتيجة عليّ.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="contact" id="contact" aria-labelledby="contact-h">
+    <div class="wrap">
+      <h2 id="contact-h">راسلني.</h2>
+      <p>قل لي وش نشاطك ووش تحتاج، وأرد عليك بفكرة وسعر.</p>
+      <div class="lines">
+        <a href="https://wa.me/966549978811"><svg class="icon" aria-hidden="true"><use href="#i-wa"/></svg><bdi class="d" dir="ltr">+966 54 997 8811</bdi></a>
+        <a href="mailto:faisalfahadmt3@gmail.com"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg><bdi class="d" dir="ltr">faisalfahadmt3@gmail.com</bdi></a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot"><div class="wrap">© 2026 فيصل فهد المطيري · الرياض</div></footer>
+
+<script>
+// Keep in sync with REEL / SLOT in pitches/motion/src/PortfolioReel.tsx.
+const WORK = {
+  "riyadh-palace":  ["قصر الرياض للاحتفالات", "قاعة أفراح", "ليلة العمر تحت ثريات الكريستال", 3852, "w7"],
+  "hdb-halls":      ["قاعات هدب", "قاعات احتفالات ومؤتمرات", "أربع قاعات في الرياض. لوحة واحدة تختار منها.", 2106, "w5"],
+  "lana-clinics":   ["لنا كلينك", "عيادة أسنان وجلدية", "ابتسامتك وبشرتك في عيادة واحدة.", 2163, ""],
+  "glance":         ["مركز قلانس", "مركز تزيين نسائي", "ساعة لكِ وحدكِ، في قلب الفيحاء", 3353, ""],
+  "qasr-al-maha":   ["قصر المها للاحتفالات", "قاعة أفراح", "لا عمود يحجب العروس", 3711, ""],
+  "amy-rose":       ["إيمي روز للأثاث", "طاولات على المقاس", "طاولتك، على مقاس بيتك.", 3140, "w5"],
+  "panorama-hall":  ["قاعة بانوراما", "قاعة أفراح", "زفّة فوق الماء", 3622, "w7"],
+  "muhit-alshamal": ["محيط الشمال", "مركز صيانة سيارات", "موعد صيانة سيارتك، برسالة واحدة.", 2872, ""],
+  "nasiriyah-hall": ["قاعة الناصرية", "قاعة أفراح", "ليلة العمر، بين الأقواس والثريات", 3311, ""],
+  "care-freshness": ["مجمع عناية ونضارة", "مجمع طبي", "عناية ببشرتك وابتسامتك، تحت سقف واحد.", 2192, ""],
+};
+const REEL = ["riyadh-palace", "tamwil", "hdb-halls", "lana-clinics", "glance", "qasr-al-maha", "amy-rose", "panorama-hall", "muhit-alshamal", "nasiriyah-hall", "care-freshness"];
+const SLOT = 1.5;
+
+const tiles = document.getElementById("tiles");
+for (const [slug, [name, kind, line, h, w]] of Object.entries(WORK)) {
+  tiles.insertAdjacentHTML("beforeend", `
+    <a class="tile ${w}" href="https://faisalmt3.github.io/demos/${slug}/" target="_blank" rel="noopener">
+      <div class="frame"><img src="assets/work/${slug}.webp" width="720" height="${h}" loading="lazy" alt="الصفحة الكاملة لتصميم ${name}"></div>
+      <div class="cap"><div><h3>${name}</h3><p>${kind} · ${line}</p></div><span class="go">افتح التصميم<svg class="icon" aria-hidden="true"><use href="#i-out"/></svg></span></div>
+    </a>`);
+}
+
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const video = document.getElementById("reel");
+if (reduced) { video.removeAttribute("autoplay"); video.pause(); }
+const nameEl = document.getElementById("reel-name"), kindEl = document.getElementById("reel-kind");
+const sync = () => {
+  const slug = REEL[Math.floor(video.currentTime / SLOT) % REEL.length];
+  const [name, kind] = slug === "tamwil" ? ["تمويل بلس", "لوحة تحكم المعرض"] : [WORK[slug][0], "تصميم مقترح: " + WORK[slug][1]];
+  if (nameEl.textContent !== name) { nameEl.textContent = name; kindEl.textContent = kind; }
+};
+// Frame-accurate where supported; timeupdate (about 4 Hz) elsewhere.
+if ("requestVideoFrameCallback" in video) { const tick = () => { sync(); video.requestVideoFrameCallback(tick); }; video.requestVideoFrameCallback(tick); }
+else video.addEventListener("timeupdate", sync);
+
+// Touch screens have no hover: play the page scroll while a tile sits mid-screen.
+if (!reduced && matchMedia("(hover: none)").matches) {
+  const io = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle("play", e.isIntersecting)), { rootMargin: "-35% 0px -35% 0px" });
+  document.querySelectorAll(".tile").forEach(t => io.observe(t));
+}
+</script>
+</body>
+</html>

@@ -96,6 +96,7 @@ section { padding-block: clamp(5rem, 12vw, 10rem) 0; }
 /* Tamwil */
 .tamwil { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3rem var(--gut); align-items: start; }
 .tamwil .head { grid-column: 1 / -1; margin: 0; }
+.tamwil .head h2 { margin-block-end: .25em; } /* the ق of قسطي drops below the line box */
 .stage { grid-column: 5 / -1; grid-row: 2 / span 2; position: relative; padding-block-end: 6rem; }
 .stage .desk { border-radius: var(--r); box-shadow: 0 30px 80px -20px rgb(0 0 0 / .8); }
 .stage .phone { position: absolute; inset-inline-end: -1rem; bottom: 0; width: 22%; border-radius: var(--r); outline: 1px solid var(--line); box-shadow: 0 30px 60px -10px rgb(0 0 0 / .9); }
@@ -202,7 +203,7 @@ section { padding-block: clamp(5rem, 12vw, 10rem) 0; }
   <div class="wrap">
     <a class="brand" href="#top">فيصل فهد المطيري</a>
     <ul>
-      <li><a href="#tamwil">تمويل بلس</a></li>
+      <li><a href="#tamwil">قسطي</a></li>
       <li><a href="#whatsapp">أتمتة واتساب</a></li>
       <li><a href="#concepts">التصاميم</a></li>
     </ul>
@@ -232,11 +233,11 @@ section { padding-block: clamp(5rem, 12vw, 10rem) 0; }
   <section id="tamwil" aria-labelledby="tamwil-h">
     <div class="wrap tamwil">
       <div class="head">
-        <h2 id="tamwil-h">تمويل بلس</h2>
+        <h2 id="tamwil-h">قسطي</h2>
         <p>نظام سعودي لإدارة البيع بالتقسيط طوّرته، ويعمل فعليًا. المعرض يسجّل العقد، والنظام يتابع الأقساط ويذكّر ويحصّل.</p>
       </div>
       <div class="stage">
-        <img class="desk" src="assets/work/tamwil-dashboard.webp" width="1440" height="900" loading="lazy" alt="لوحة تحكم المعرض في تمويل بلس: الأقساط المتأخرة وتحصيل الشهر">
+        <img class="desk" src="assets/work/tamwil-dashboard.webp" width="1440" height="900" loading="lazy" alt="لوحة تحكم المعرض في قسطي: الأقساط المتأخرة وتحصيل الشهر">
         <img class="phone" src="assets/work/tamwil-portal.webp" width="585" height="1266" loading="lazy" alt="بوابة العميل على الجوال: القسط المتأخر وزر السداد">
       </div>
       <ul class="facts">
@@ -247,7 +248,7 @@ section { padding-block: clamp(5rem, 12vw, 10rem) 0; }
         <li>استيراد البيانات القديمة من <bdi>Excel</bdi>، ونسخة أندرويد.</li>
       </ul>
       <div class="tamwil-foot">
-        <a class="btn btn-line" href="https://tamwil.pages.dev" target="_blank" rel="noopener">زُر الموقع<svg class="icon" aria-hidden="true"><use href="#i-out"/></svg></a>
+        <a class="btn btn-line" href="https://qisti.app" target="_blank" rel="noopener">زُر الموقع<svg class="icon" aria-hidden="true"><use href="#i-out"/></svg></a>
         <p class="note">اللقطات ببيانات تجريبية، لأن النظام يحمل بيانات عملاء حقيقية.</p>
       </div>
     </div>
@@ -352,7 +353,7 @@ if (reduced) { video.removeAttribute("autoplay"); video.pause(); }
 const nameEl = document.getElementById("reel-name"), kindEl = document.getElementById("reel-kind");
 const sync = () => {
   const slug = REEL[Math.floor(video.currentTime / SLOT) % REEL.length];
-  const [name, kind] = slug === "tamwil" ? ["تمويل بلس", "لوحة تحكم المعرض"] : [WORK[slug][0], "تصميم مقترح: " + WORK[slug][1]];
+  const [name, kind] = slug === "tamwil" ? ["قسطي", "لوحة تحكم المعرض"] : [WORK[slug][0], "تصميم مقترح: " + WORK[slug][1]];
   if (nameEl.textContent !== name) { nameEl.textContent = name; kindEl.textContent = kind; }
 };
 // Frame-accurate where supported; timeupdate (about 4 Hz) elsewhere.

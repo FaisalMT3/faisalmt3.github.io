@@ -301,6 +301,12 @@ table{border-collapse:collapse;width:100%}td,th{border:1px solid #ddd;padding:8p
 
 # ---------- modes ----------
 if ($Undo) {
+    Unregister-ScheduledTask -TaskName WinBoostAfter -Confirm:$false -ErrorAction SilentlyContinue   # undo before the restart
+    if (-not (Test-Path $Journal)) {
+        Write-Host 'Nothing to undo: WinBoost has no active changes on this PC. / لا توجد تغييرات للتراجع عنها.'
+        Remove-Item (Join-Path $Desktop 'WinBoost Undo.lnk') -ErrorAction SilentlyContinue
+        Stop-Transcript | Out-Null; Read-Host 'Press Enter to close / اضغط Enter للإغلاق'; exit
+    }
     $j = Get-Content $Journal -Raw | ConvertFrom-Json
     $list = @($j.changes); [array]::Reverse($list)
     foreach ($c in $list) {
@@ -319,8 +325,13 @@ if ($Undo) {
     }
     Rename-Item $Journal "$Journal.undone-$(Get-Date -Format yyyyMMddHHmm)"
     Remove-Item (Join-Path $Desktop 'WinBoost Undo.lnk') -ErrorAction SilentlyContinue
-    Write-Host 'تم التراجع عن كل الإعدادات. أعد تشغيل الجهاز. / All settings restored. Please restart.'
+    $n = @($list | Where-Object type -ne 'appx').Count
+    Write-Host ''
+    Write-Host "Done: $n settings restored to how they were before WinBoost. Removed apps can be reinstalled from the Microsoft Store."
+    Write-Host "تم: إرجاع $n إعداد كما كان قبل التسريع. التطبيقات المحذوفة يمكن تثبيتها من متجر مايكروسوفت."
     Stop-Transcript | Out-Null
+    $r = Read-Host 'Restart now to finish? (Y/N) / إعادة التشغيل الآن؟'
+    if ($r -match '^(y|yes|ن|نعم)$') { Restart-Computer -Force }
     exit
 }
 

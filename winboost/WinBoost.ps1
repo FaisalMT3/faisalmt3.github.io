@@ -176,11 +176,11 @@ function Lighten-Visuals {
 }
 
 function Set-FastPower {
-    $old = ((powercfg /getactivescheme) -replace '.*GUID: ([0-9a-f-]+).*', '$1').Trim()
+    $old = [regex]::Match("$(powercfg /getactivescheme)", '[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}').Value
     $hp = '8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c'
     powercfg /setactive $hp 2>$null
     if ($LASTEXITCODE -ne 0) {   # hidden on some PCs: make a copy and use that
-        $hp = ((powercfg /duplicatescheme $hp) -replace '.*GUID: ([0-9a-f-]+).*', '$1').Trim()
+        $hp = [regex]::Match("$(powercfg /duplicatescheme $hp)", '[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}').Value
         powercfg /setactive $hp
     }
     if ($old -ne $hp) { [void]$script:changes.Add(@{ type = 'power'; old = $old }) }
@@ -289,7 +289,7 @@ if ($DryRun) { Stop-Transcript | Out-Null; exit }
 
 if (Test-Path $Journal) {
     Write-Host 'WinBoost already ran on this PC. Run with -Undo first to start over. / تم التسريع مسبقاً على هذا الجهاز.'
-    Stop-Transcript | Out-Null; exit 1
+    Stop-Transcript | Out-Null; Read-Host 'Press Enter to close / اضغط Enter للإغلاق'; exit 1
 }
 
 # restore point first, or stop: no change without a way back
@@ -299,7 +299,7 @@ New-ItemProperty -Force $freq SystemRestorePointCreationFrequency -Value 0 -Prop
 try { Checkpoint-Computer -Description 'WinBoost' -RestorePointType MODIFY_SETTINGS -ErrorAction Stop }
 catch {
     Write-Host "Could not create a restore point, nothing was changed: $_ / تعذر إنشاء نقطة استعادة، لم يتم تغيير أي شيء."
-    Stop-Transcript | Out-Null; exit 1
+    Stop-Transcript | Out-Null; Read-Host 'Press Enter to close / اضغط Enter للإغلاق'; exit 1
 }
 finally { Remove-ItemProperty $freq SystemRestorePointCreationFrequency -ErrorAction SilentlyContinue }
 

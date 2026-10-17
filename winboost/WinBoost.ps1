@@ -35,7 +35,7 @@ $JunkApps = @(
     'king.com.BubbleWitch3Saga', 'Microsoft.Windows.DevHome'
 )
 # Startup entries matching these are switched off (same as Task Manager > Startup > Disable). Apps stay installed.
-$StartupOff = 'Teams|Spotify|Discord|Steam|EpicGames|Skype|EdgeAutoLaunch|ChromeAutoLaunch|Opera|Brave|CCleaner|AdobeGC|AdobeAAM|Acrobat|iTunesHelper|Zoom|EADM|Origin|Battle\.net|Ubisoft|uTorrent|BitTorrent|Cortana'
+$StartupOff = 'Teams|Spotify|Discord|Steam|EpicGames|Skype|EdgeAutoLaunch|ChromeAutoLaunch|Opera|Brave|CCleaner|AdobeGC|AdobeAAM|Acrobat|iTunesHelper|Zoom|EADM|Origin|Battle\.net|Ubisoft|uTorrent|BitTorrent|Cortana|SunJavaUpdateSched|AdobeARM|LenovoVantage|Lenovo\.Vantage|DellSupportAssist|SupportAssist|HPJumpStart|HPSmartAssistant|HP Support|AsusUpdate|MyASUS'
 # Gamers want these running; the gaming tier leaves them at startup
 $GameLaunchers = 'Discord|Steam|EpicGames|Battle\.net|Ubisoft|EADM|Origin'
 
@@ -141,6 +141,7 @@ function Get-Scan {
         junkApps   = @(Get-AppxPackage -AllUsers | Where-Object Name -in $JunkApps | Select-Object -ExpandProperty Name -Unique)
         processes  = @(Get-Process).Count
         gamer      = @(Get-GamerSign)
+        av         = @(Get-CimInstance -Namespace root/SecurityCenter2 -ClassName AntiVirusProduct -ErrorAction SilentlyContinue | Where-Object displayName -notmatch 'Defender' | Select-Object -ExpandProperty displayName -Unique)
     }
 }
 
@@ -200,15 +201,24 @@ function Lighten-Visuals {
 }
 
 function Set-FastPower {
-    $old = [regex]::Match("$(powercfg /getactivescheme)", '[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}').Value
-    $hp = '8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c'
-    powercfg /setactive $hp 2>$null
-    if ($LASTEXITCODE -ne 0) {   # hidden on some PCs: make a copy and use that
-        $hp = [regex]::Match("$(powercfg /duplicatescheme $hp)", '[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}').Value
-        powercfg /setactive $hp
+    $guid = '[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}'
+    $old = [regex]::Match("$(powercfg /getactivescheme)", $guid).Value
+    $ours = 'b0057000-0000-4000-8000-000000000001'   # our copy of Ultimate Performance; fixed so re-runs don't pile up copies
+    powercfg /duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61 $ours 2>$null | Out-Null
+    powercfg /setactive $ours 2>$null
+    $label = 'أداء فائق (Ultimate Performance)'
+    if ($LASTEXITCODE -ne 0) {   # some PCs only allow High performance
+        $ours = '8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c'
+        powercfg /setactive $ours 2>$null
+        if ($LASTEXITCODE -ne 0) {
+            $ours = [regex]::Match("$(powercfg /duplicatescheme $ours)", $guid).Value
+            powercfg /setactive $ours
+        }
+        $label = 'أداء عالٍ'
     }
-    if ($old -ne $hp) { [void]$script:changes.Add(@{ type = 'power'; old = $old }) }
-    [void]$script:done.Add('خطة طاقة "أداء عالٍ" (جهاز مكتبي)')
+    if ($old -ne $ours) { [void]$script:changes.Add(@{ type = 'power'; old = $old }) }
+    Set-Reg 'HKLM:\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling' 'PowerThrottlingOff' 1
+    [void]$script:done.Add("خطة طاقة `"$label`" وإيقاف تقييد الطاقة للبرامج (جهاز مكتبي)")
 }
 
 function Clear-Junk {
@@ -234,9 +244,19 @@ function Tune-Gaming {
     Set-Reg 'HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR' 'AppCaptureEnabled' 0
     foreach ($v in 'MouseSpeed', 'MouseThreshold1', 'MouseThreshold2') { Set-Reg 'HKCU:\Control Panel\Mouse' $v '0' 'String' }
     Set-Reg 'HKLM:\SYSTEM\CurrentControlSet\Control\GraphicsDrivers' 'HwSchMode' 2
+    $games = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games'
+    Set-Reg $games 'GPU Priority' 8
+    Set-Reg $games 'Priority' 6
+    Set-Reg $games 'Scheduling Category' 'High' 'String'
+    Set-Reg $games 'SFIO Priority' 'High' 'String'
+    foreach ($if in Get-ChildItem 'HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces' -ErrorAction SilentlyContinue) {
+        $ip = "$($if.GetValue('DhcpIPAddress'))$($if.GetValue('IPAddress'))"
+        if ($ip -and $ip -notmatch '^(0\.0\.0\.0)*$') { Set-Reg $if.PSPath 'TcpAckFrequency' 1; Set-Reg $if.PSPath 'TCPNoDelay' 1 }
+    }
     [void]$script:done.Add('تفعيل وضع الألعاب وإيقاف تسجيل الألعاب في الخلفية')
     [void]$script:done.Add('إلغاء تسريع الماوس (تصويب أدق)')
     [void]$script:done.Add('تفعيل جدولة كرت الشاشة بالعتاد (إن كان الكرت يدعمها)')
+    [void]$script:done.Add('أولوية أعلى للألعاب في المعالج وكرت الشاشة، وتقليل تأخير الشبكة (Nagle)')
 }
 
 # installed programs using the most RAM/CPU right now; Windows itself and Defender are left out so nobody "closes" them
@@ -257,10 +277,69 @@ function Get-TopApps {
     } | Sort-Object ramMB -Descending | Select-Object -First 8
 }
 
+function Stop-BrowserBackground {
+    $edge = 'HKLM:\SOFTWARE\Policies\Microsoft\Edge'
+    Set-Reg $edge 'StartupBoostEnabled' 0
+    Set-Reg $edge 'BackgroundModeEnabled' 0
+    $chrome = "$env:ProgramFiles\Google\Chrome\Application\chrome.exe", "${env:ProgramFiles(x86)}\Google\Chrome\Application\chrome.exe", "$env:LOCALAPPDATA\Google\Chrome\Application\chrome.exe"
+    if ($chrome | Where-Object { Test-Path $_ }) { Set-Reg 'HKLM:\SOFTWARE\Policies\Google\Chrome' 'BackgroundModeEnabled' 0 }
+    [void]$script:done.Add('منع المتصفح من العمل في الخلفية بعد إغلاقه ومع بدء التشغيل (Edge وChrome)')
+}
+
+function Disable-Widgets {
+    Set-Reg 'HKLM:\SOFTWARE\Policies\Microsoft\Dsh' 'AllowNewsAndInterests' 0                    # Windows 11 Widgets
+    Set-Reg 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Feeds' 'EnableFeeds' 0            # Windows 10 news and interests
+    [void]$script:done.Add('إيقاف لوحة الأخبار والطقس (Widgets) التي تعمل في الخلفية')
+}
+
+function Disable-Hibernation {
+    if ((Get-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Control\Power' -ErrorAction SilentlyContinue).HibernateEnabled -ne 1) { return }
+    $f = Get-Item "$env:SystemDrive\hiberfil.sys" -Force -ErrorAction SilentlyContinue
+    powercfg /hibernate off
+    [void]$script:changes.Add(@{ type = 'hib' })
+    $gb = if ($f) { [math]::Round($f.Length / 1GB, 1) } else { 0 }
+    [void]$script:done.Add("إيقاف ملف السبات وتحرير $gb GB (جهاز مكتبي)")
+}
+
+# popular tweaks: small or no measurable gain, but harmless and reversible
+function Tune-Responsiveness($scan) {
+    Set-Reg 'HKLM:\SYSTEM\CurrentControlSet\Control\PriorityControl' 'Win32PrioritySeparation' 38
+    Set-Reg 'HKCU:\Control Panel\Desktop' 'MenuShowDelay' '100' 'String'
+    $sp = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile'
+    Set-Reg $sp 'SystemResponsiveness' 10
+    Set-Reg $sp 'NetworkThrottlingIndex' -1
+    foreach ($t in @(
+            @('\Microsoft\Windows\Application Experience\', 'Microsoft Compatibility Appraiser'),
+            @('\Microsoft\Windows\Application Experience\', 'ProgramDataUpdater'),
+            @('\Microsoft\Windows\Customer Experience Improvement Program\', 'Consolidator'),
+            @('\Microsoft\Windows\Customer Experience Improvement Program\', 'UsbCeip'),
+            @('\Microsoft\Windows\Autochk\', 'Proxy'))) {
+        $task = Get-ScheduledTask -TaskPath $t[0] -TaskName $t[1] -ErrorAction SilentlyContinue
+        if ($task -and $task.State -ne 'Disabled') {
+            try { Disable-ScheduledTask -TaskPath $t[0] -TaskName $t[1] -ErrorAction Stop | Out-Null; [void]$script:changes.Add(@{ type = 'task'; path = $t[0]; name = $t[1] }) } catch { }
+        }
+    }
+    [void]$script:done.Add('أولوية أعلى للبرنامج المفتوح أمامك، وقوائم أسرع، وإيقاف مهام القياس المجدولة')
+}
+
+function Tune-Disk($scan) {
+    if ($scan.disk -eq 'SSD') {
+        Set-Svc 'SysMain' 'Disabled'
+        try { Optimize-Volume -DriveLetter C -ReTrim -ErrorAction Stop } catch { }
+        [void]$script:done.Add('صيانة قرص SSD (TRIM) وإيقاف خدمة SysMain غير اللازمة معه')
+    }
+    elseif ($scan.disk -eq 'HDD') {
+        Set-Svc 'WSearch' 'Manual'
+        Write-Host 'Defragmenting the hard drive (can take a while)...'
+        try { Optimize-Volume -DriveLetter C -Defrag -ErrorAction Stop } catch { }
+        [void]$script:done.Add('إلغاء تجزئة القرص الصلب وتخفيف فهرسة البحث عليه')
+    }
+}
+
 function Get-Plan($scan) {
-    $plan = @('Remove-Junk', 'Disable-StartupJunk', 'Disable-Ads', 'Reduce-Telemetry', 'Clear-Junk')
+    $plan = @('Remove-Junk', 'Disable-StartupJunk', 'Disable-Ads', 'Reduce-Telemetry', 'Stop-BrowserBackground', 'Disable-Widgets', 'Tune-Responsiveness', 'Clear-Junk', 'Tune-Disk')
     if ($scan.ramGB -le 8 -or $scan.cores -le 4) { $plan += 'Lighten-Visuals' }
-    if (-not $scan.laptop) { $plan += 'Set-FastPower' }
+    if (-not $scan.laptop) { $plan += 'Set-FastPower'; $plan += 'Disable-Hibernation' }
     if ($Gaming -or $scan.gamer) { $plan += 'Tune-Gaming' }
     $plan
 }
@@ -275,6 +354,11 @@ function Write-Report($j, $afterScan) {
     $top = ($afterScan.topApps | ForEach-Object { "<tr><td><bdi>$([Net.WebUtility]::HtmlEncode($_.name))</bdi></td><td><bdi>$($_.ramMB) MB</bdi></td><td><bdi>$($_.cpu)%</bdi></td></tr>" }) -join ''
     $tier = if ($j.gaming) { ' · وضع الألعاب' } else { '' }
     if ([int]$j.run -gt 1) { $tier += " · إعادة التسريع رقم $($j.run)" }
+    $notes = @()
+    $trial = @($b.av) -match 'McAfee|Norton'
+    if ($trial) { $notes += "وجدنا برنامج الحماية <b>$([Net.WebUtility]::HtmlEncode($trial[0]))</b>. هذه البرامج تأتي غالباً كنسخة تجريبية مع الأجهزة الجديدة وتبطئها كثيراً. إن لم تكن مشتركاً فيه، احذفه من الإعدادات ثم التطبيقات، ومكافح فيروسات ويندوز يعمل تلقائياً بعده." }
+    if (@($j.plan) -contains 'Stop-BrowserBackground') { $notes += 'قد يظهر في إعدادات Edge أو Chrome سطر «يُدار بواسطة مؤسستك». هذا طبيعي وسببه فقط إعداد منع المتصفح من العمل في الخلفية، ويختفي عند التراجع.' }
+    $notesHtml = if ($notes) { '<h2>ملاحظات</h2><ul>' + (($notes | ForEach-Object { "<li>$_</li>" }) -join '') + '</ul>' } else { '' }
     $items = ($j.done | ForEach-Object { "<li>$([Net.WebUtility]::HtmlEncode($_))</li>" }) -join ''
     $html = @"
 <!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><title>تقرير تسريع الجهاز</title>
@@ -288,6 +372,7 @@ table{border-collapse:collapse;width:100%}td,th{border:1px solid #ddd;padding:8p
 <h2>أكثر البرامج استهلاكاً بعد التشغيل</h2>
 <p class="n">برامجك المثبتة فقط (بدون ملفات ويندوز ومكافح الفيروسات). إن كان برنامج لا تستخدمه في أعلى القائمة، فإغلاقه أو حذفه يعطي أكبر فرق.</p>
 <table><tr><th>البرنامج</th><th>الذاكرة</th><th>المعالج</th></tr>$top</table>
+$notesHtml
 <h2>ما تم عمله</h2><ul>$items</ul>
 <h2>للتراجع</h2>
 <p>شغّل اختصار <b>WinBoost Undo</b> على سطح المكتب لإرجاع كل الإعدادات. التطبيقات المحذوفة يمكن تثبيتها مجدداً من متجر مايكروسوفت.
@@ -320,6 +405,8 @@ if ($Undo) {
             }
             'svc'   { Set-Service $c.name -StartupType $c.old; if ($c.old -eq 'Automatic') { Start-Service $c.name -ErrorAction SilentlyContinue } }
             'power' { powercfg /setactive $c.old }
+            'hib'   { powercfg /hibernate on }
+            'task'  { Enable-ScheduledTask -TaskPath $c.path -TaskName $c.name -ErrorAction SilentlyContinue | Out-Null }
             'appx'  { Write-Host "Removed app (reinstall from Microsoft Store if needed): $($c.name)" }
         }
     }

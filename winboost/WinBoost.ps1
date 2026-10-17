@@ -5,9 +5,10 @@
     -DryRun      show the scan and the plan, change nothing
     -After       (run by a one-time logon task) measure again and write the before/after report
     -Undo        put back everything the journal recorded
+    -Gaming      gaming tier: also Game Mode, no background capture, raw mouse, GPU scheduling; keeps game launchers at startup
   Never touches: Defender, Windows Update, UAC, drivers, user files, activation.
 #>
-param([switch]$DryRun, [switch]$After, [switch]$Undo)
+param([switch]$DryRun, [switch]$After, [switch]$Undo, [switch]$Gaming)
 
 $Dir     = "$env:ProgramFiles\WinBoost"   # admin-only write: the elevated logon task runs this copy
 $Self    = "$Dir\WinBoost.ps1"
@@ -35,6 +36,8 @@ $JunkApps = @(
 )
 # Startup entries matching these are switched off (same as Task Manager > Startup > Disable). Apps stay installed.
 $StartupOff = 'Teams|Spotify|Discord|Steam|EpicGames|Skype|EdgeAutoLaunch|ChromeAutoLaunch|Opera|Brave|CCleaner|AdobeGC|AdobeAAM|Acrobat|iTunesHelper|Zoom|EADM|Origin|Battle\.net|Ubisoft|uTorrent|BitTorrent|Cortana'
+# Gamers want these running; the gaming tier leaves them at startup
+$GameLaunchers = 'Discord|Steam|EpicGames|Battle\.net|Ubisoft|EADM|Origin'
 
 # ---------- journal: every change records the old value so -Undo can put it back ----------
 $script:changes = New-Object System.Collections.ArrayList
@@ -154,10 +157,10 @@ function Remove-Junk($scan) {
 }
 
 function Disable-StartupJunk {
-    foreach ($i in Get-StartupItems | Where-Object { $_.enabled -and $_.name -match $StartupOff }) {
+    foreach ($i in Get-StartupItems | Where-Object { $_.enabled -and $_.name -match $StartupOff -and -not ($Gaming -and $_.name -match $GameLaunchers) }) {
         if ($i.kind -eq 'uwp') { Set-Reg $i.approved 'State' 1 }
         else { Set-Reg $i.approved $i.name ([byte[]](3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)) 'Binary' }
-        [void]$script:done.Add("إيقاف التشغيل التلقائي: $($i.name)")
+        [void]$script:done.Add("إيقاف التشغيل التلقائي: $($i.name -replace '_[0-9A-Fa-f]{32}$', '')")
     }
 }
 
@@ -216,10 +219,40 @@ function Clear-Junk {
     [void]$script:done.Add("تنظيف الملفات المؤقتة وبقايا التحديثات ($gb GB)")
 }
 
+function Tune-Gaming {
+    Set-Reg 'HKCU:\Software\Microsoft\GameBar' 'AutoGameModeEnabled' 1
+    Set-Reg 'HKCU:\System\GameConfigStore' 'GameDVR_Enabled' 0
+    Set-Reg 'HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR' 'AppCaptureEnabled' 0
+    foreach ($v in 'MouseSpeed', 'MouseThreshold1', 'MouseThreshold2') { Set-Reg 'HKCU:\Control Panel\Mouse' $v '0' 'String' }
+    Set-Reg 'HKLM:\SYSTEM\CurrentControlSet\Control\GraphicsDrivers' 'HwSchMode' 2
+    [void]$script:done.Add('تفعيل وضع الألعاب وإيقاف تسجيل الألعاب في الخلفية')
+    [void]$script:done.Add('إلغاء تسريع الماوس (تصويب أدق)')
+    [void]$script:done.Add('تفعيل جدولة كرت الشاشة بالعتاد (إن كان الكرت يدعمها)')
+}
+
+# installed programs using the most RAM/CPU right now; Windows itself and Defender are left out so nobody "closes" them
+function Get-TopApps {
+    $user = { Get-Process | Where-Object { $_.Id -ne $PID -and $_.Path -and $_.Path -notlike "$env:windir\*" -and $_.Path -notlike '*\Windows Defender\*' } }
+    $cores = (Get-CimInstance Win32_Processor | Measure-Object NumberOfLogicalProcessors -Sum).Sum
+    $t0 = @{}; foreach ($p in & $user) { $t0[$p.Id] = $p.CPU }
+    $clock = [Diagnostics.Stopwatch]::StartNew()
+    Start-Sleep 3
+    $now = @(& $user); $secs = $clock.Elapsed.TotalSeconds
+    $now | Group-Object ProcessName | ForEach-Object {
+        $cpu = ($_.Group | ForEach-Object { if ($t0.ContainsKey($_.Id)) { $_.CPU - $t0[$_.Id] } } | Measure-Object -Sum).Sum
+        [pscustomobject]@{
+            name  = $_.Name
+            ramMB = [int](($_.Group | Measure-Object WorkingSet64 -Sum).Sum / 1MB)
+            cpu   = [math]::Round(100 * $cpu / $secs / $cores, 1)
+        }
+    } | Sort-Object ramMB -Descending | Select-Object -First 8
+}
+
 function Get-Plan($scan) {
     $plan = @('Remove-Junk', 'Disable-StartupJunk', 'Disable-Ads', 'Reduce-Telemetry', 'Clear-Junk')
     if ($scan.ramGB -le 8 -or $scan.cores -le 4) { $plan += 'Lighten-Visuals' }
     if (-not $scan.laptop) { $plan += 'Set-FastPower' }
+    if ($Gaming) { $plan += 'Tune-Gaming' }
     $plan
 }
 
@@ -227,23 +260,24 @@ function Get-Plan($scan) {
 function Write-Report($j, $afterScan) {
     $b = $j.before
     function Row($label, $x, $y) { "<tr><td>$label</td><td><bdi>$x</bdi></td><td><bdi>$y</bdi></td></tr>" }
-    $bootB = if ($b.boot) { '{0:N1} s' -f ($b.boot.ms / 1000) } else { 'غير متاح' }
-    $bootA = if ($afterScan.boot -and $afterScan.boot.at -gt $j.appliedAt) { '{0:N1} s' -f ($afterScan.boot.ms / 1000) } else { 'غير متاح' }
-    $rows = (Row 'زمن الإقلاع' $bootB $bootA) +
-            (Row 'برامج تعمل مع بدء التشغيل' $b.startupOn $afterScan.startupOn) +
+    $rows = (Row 'برامج تعمل مع بدء التشغيل' $b.startupOn $afterScan.startupOn) +
             (Row 'تطبيقات غير ضرورية مثبتة' $b.junkApps.Count $afterScan.junkApps.Count) +
             (Row 'المساحة الفارغة في C:' "$($b.freeGB) GB" "$($afterScan.freeGB) GB")
+    $top = ($afterScan.topApps | ForEach-Object { "<tr><td><bdi>$([Net.WebUtility]::HtmlEncode($_.name))</bdi></td><td><bdi>$($_.ramMB) MB</bdi></td><td><bdi>$($_.cpu)%</bdi></td></tr>" }) -join ''
+    $tier = if ($j.gaming) { ' · باقة الألعاب' } else { '' }
     $items = ($j.done | ForEach-Object { "<li>$([Net.WebUtility]::HtmlEncode($_))</li>" }) -join ''
     $html = @"
 <!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><title>تقرير تسريع الجهاز</title>
 <style>body{font-family:'Segoe UI',Tahoma,sans-serif;max-width:720px;margin:40px auto;padding:0 16px;color:#1a1a1a;line-height:1.7}
 table{border-collapse:collapse;width:100%}td,th{border:1px solid #ddd;padding:8px 12px;text-align:start}th{background:#f4f4f4}
 .n{color:#666;font-size:14px}</style>
-<h1>تقرير تسريع الجهاز</h1>
+<h1>تقرير تسريع الجهاز$tier</h1>
 <p class="n" dir="ltr">$($b.os) · RAM $($b.ramGB) GB · $($env:COMPUTERNAME) · $((Get-Date).ToString('yyyy-MM-dd HH:mm'))</p>
 <h2>قبل وبعد</h2>
-<p class="n">زمن الإقلاع يتغير بضع ثوانٍ من تشغيل لآخر، والفرق الأوضح يظهر بعد عدة أيام من الاستخدام.</p>
 <table><tr><th>المقياس</th><th>قبل</th><th>بعد</th></tr>$rows</table>
+<h2>أكثر البرامج استهلاكاً بعد التشغيل</h2>
+<p class="n">برامجك المثبتة فقط (بدون ملفات ويندوز ومكافح الفيروسات). إن كان برنامج لا تستخدمه في أعلى القائمة، فإغلاقه أو حذفه يعطي أكبر فرق.</p>
+<table><tr><th>البرنامج</th><th>الذاكرة</th><th>المعالج</th></tr>$top</table>
 <h2>ما تم عمله</h2><ul>$items</ul>
 <h2>للتراجع</h2>
 <p>شغّل اختصار <b>WinBoost Undo</b> على سطح المكتب لإرجاع كل الإعدادات. التطبيقات المحذوفة يمكن تثبيتها مجدداً من متجر مايكروسوفت.
@@ -283,9 +317,9 @@ if ($Undo) {
 if ($After) {
     Unregister-ScheduledTask -TaskName WinBoostAfter -Confirm:$false -ErrorAction SilentlyContinue
     $j = Get-Content $Journal -Raw | ConvertFrom-Json
-    # Windows writes the boot-time event a few minutes after logon
-    for ($i = 0; $i -lt 20; $i++) { $b = Get-BootMs; if ($b -and $b.at -gt $j.appliedAt) { break }; Start-Sleep 30 }
+    Start-Sleep 60   # let startup programs load before measuring what uses RAM/CPU
     $a = Get-Scan
+    $a['topApps'] = @(Get-TopApps)
     $j | Add-Member -Force after $a
     $j | ConvertTo-Json -Depth 6 | Set-Content -Encoding UTF8 $Journal
     Start-Process (Write-Report $j $a)
@@ -318,7 +352,7 @@ finally { Remove-ItemProperty $freq SystemRestorePointCreationFrequency -ErrorAc
 foreach ($step in $plan) {
     Write-Host "== $step"
     try { & $step $scan } catch { Write-Host "  skipped: $_" }
-    Save-Journal @{ before = $scan; plan = $plan; appliedAt = (Get-Date).ToString('s') }
+    Save-Journal @{ before = $scan; plan = $plan; gaming = [bool]$Gaming; appliedAt = (Get-Date).ToString('s') }
 }
 
 $ws = New-Object -ComObject WScript.Shell

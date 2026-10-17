@@ -32,8 +32,13 @@ $JunkApps = @(
     'Microsoft.Todos', 'Microsoft.WindowsFeedbackHub', 'Microsoft.WindowsMaps', 'Microsoft.ZuneVideo', 'Microsoft.MixedReality.Portal',
     'Microsoft.Microsoft3DViewer', 'Microsoft.3DBuilder', 'Microsoft.SkypeApp', 'Microsoft.Messaging', 'Microsoft.OneConnect',
     'Microsoft.549981C3F5F10', 'MicrosoftTeams', 'Clipchamp.Clipchamp', 'king.com.CandyCrushSaga', 'king.com.CandyCrushSodaSaga',
-    'king.com.BubbleWitch3Saga', 'Microsoft.Windows.DevHome'
+    'king.com.BubbleWitch3Saga', 'Microsoft.Windows.DevHome', 'Microsoft.MSPaint', 'Microsoft.Office.OneNote', 'Microsoft.Print3D',
+    'Microsoft.Wallet', 'Microsoft.BingFinance', 'Microsoft.BingSports', 'Microsoft.BingTravel', 'Microsoft.BingFoodAndDrink', 'Microsoft.BingHealthAndFitness'
 )
+# Preinstalled promo apps and (on non-gaming PCs) the Xbox apps: removed only if never used, see Test-AppUnused
+$PromoApps = 'Disney|TikTok|Facebook\.Instagram|Facebook\.Facebook|AmazonVideo\.PrimeVideo|Booking\.com|ExpressVPN|RoyalMatch|DreamGames|king\.com\.|HiddenCity|MarchofEmpires|WildTangent|Netflix'
+$XboxApps  = 'Microsoft.GamingApp', 'Microsoft.XboxApp', 'Microsoft.XboxGamingOverlay', 'Microsoft.XboxGameOverlay', 'Microsoft.XboxSpeechToTextOverlay'
+
 # Startup entries matching these are switched off (same as Task Manager > Startup > Disable). Apps stay installed.
 $StartupOff = 'Teams|Spotify|Discord|Steam|EpicGames|Skype|EdgeAutoLaunch|ChromeAutoLaunch|Opera|Brave|CCleaner|AdobeGC|AdobeAAM|Acrobat|iTunesHelper|Zoom|EADM|Origin|Battle\.net|Ubisoft|uTorrent|BitTorrent|Cortana|SunJavaUpdateSched|AdobeARM|LenovoVantage|Lenovo\.Vantage|DellSupportAssist|SupportAssist|HPJumpStart|HPSmartAssistant|HP Support|AsusUpdate|MyASUS'
 # Gamers want these running; the gaming tier leaves them at startup
@@ -124,6 +129,24 @@ function Get-GamerSign {
     @($apps) + @($gpu) | Where-Object { $_ } | Select-Object -Unique
 }
 
+# ponytail: "never used" = the app's data folder has no LocalState files and under 64 KB (an opened app writes more);
+# a signed-in TikTok or Xbox app is far above that. Upgrade path: read the app's last-launch time if Windows ever exposes it.
+function Test-AppUnused($pkg) {
+    $d = "$env:LOCALAPPDATA\Packages\$($pkg.PackageFamilyName)"
+    if (-not (Test-Path $d)) { return $true }
+    $kb = (Get-ChildItem $d -Recurse -Force -File -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum / 1KB
+    $ls = @(Get-ChildItem "$d\LocalState" -Recurse -Force -File -ErrorAction SilentlyContinue).Count
+    $ls -eq 0 -and $kb -lt 64
+}
+
+function Get-JunkApps($isGamer) {
+    $all = Get-AppxPackage -AllUsers
+    $fixed = $all | Where-Object Name -in $JunkApps
+    $maybe = $all | Where-Object { $_.Name -match $PromoApps -or (-not $isGamer -and $_.Name -in $XboxApps) } |
+        Where-Object { Get-AppxPackage -Name $_.Name | Where-Object { Test-AppUnused $_ } }
+    @($fixed) + @($maybe) | Select-Object -ExpandProperty Name -Unique
+}
+
 function Get-Scan {
     $os = Get-CimInstance Win32_OperatingSystem
     $c  = Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='C:'"
@@ -138,7 +161,7 @@ function Get-Scan {
         freeGB     = [math]::Round($c.FreeSpace / 1GB, 2)
         boot       = Get-BootMs
         startupOn  = @(Get-StartupItems | Where-Object enabled).Count
-        junkApps   = @(Get-AppxPackage -AllUsers | Where-Object Name -in $JunkApps | Select-Object -ExpandProperty Name -Unique)
+        junkApps   = @(Get-JunkApps ($Gaming -or @(Get-GamerSign).Count))
         processes  = @(Get-Process).Count
         gamer      = @(Get-GamerSign)
         av         = @(Get-CimInstance -Namespace root/SecurityCenter2 -ClassName AntiVirusProduct -ErrorAction SilentlyContinue | Where-Object displayName -notmatch 'Defender' | Select-Object -ExpandProperty displayName -Unique)
@@ -162,13 +185,14 @@ function Remove-Junk($scan) {
             [void]$script:changes.Add(@{ type = 'appx'; name = $n })
         }
     }
-    foreach ($pp in Get-AppxProvisionedPackage -Online | Where-Object DisplayName -in $JunkApps) {
+    foreach ($pp in Get-AppxProvisionedPackage -Online | Where-Object DisplayName -in @($scan.junkApps)) {
         try { Remove-AppxProvisionedPackage -Online -AllUsers -PackageName $pp.PackageName -ErrorAction Stop | Out-Null } catch { }
     }
 }
 
 function Disable-StartupJunk {
-    foreach ($i in Get-StartupItems | Where-Object { $_.enabled -and $_.name -match $StartupOff -and -not ($Gaming -and $_.name -match $GameLaunchers) }) {
+    $oneDriveIdle = -not (Get-ChildItem 'HKCU:\Software\Microsoft\OneDrive\Accounts' -ErrorAction SilentlyContinue | Where-Object { $_.GetValue('UserEmail') })
+    foreach ($i in Get-StartupItems | Where-Object { $_.enabled -and (($_.name -match $StartupOff -and -not ($Gaming -and $_.name -match $GameLaunchers)) -or ($oneDriveIdle -and $_.name -eq 'OneDrive')) }) {
         if ($i.kind -eq 'uwp') { Set-Reg $i.approved 'State' 1 }
         else { Set-Reg $i.approved $i.name ([byte[]](3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)) 'Binary' }
         [void]$script:done.Add("إيقاف التشغيل التلقائي: $($i.name -replace '_[0-9A-Fa-f]{32}$', '')")
@@ -336,8 +360,20 @@ function Tune-Disk($scan) {
     }
 }
 
+function Remove-Clutter {
+    Set-Reg 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Search' 'BingSearchEnabled' 0
+    Set-Reg 'HKCU:\Software\Policies\Microsoft\Windows\Explorer' 'DisableSearchBoxSuggestions' 1
+    $edge = 'HKLM:\SOFTWARE\Policies\Microsoft\Edge'
+    foreach ($v in 'HubsSidebarEnabled', 'EdgeShoppingAssistantEnabled', 'ShowRecommendationsEnabled', 'NewTabPageContentEnabled', 'PersonalizationReportingEnabled') { Set-Reg $edge $v 0 }
+    $adv = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced'
+    foreach ($v in 'ShowCopilotButton', 'ShowTaskViewButton', 'TaskbarMn') { Set-Reg $adv $v 0 }
+    [void]$script:done.Add('إزالة نتائج الإنترنت والإعلانات من بحث قائمة ابدأ (بحث أسرع)')
+    [void]$script:done.Add('تنظيف Edge من الشريط الجانبي ونوافذ التسوق والأخبار في الصفحة الجديدة')
+    [void]$script:done.Add('إخفاء أزرار Copilot وعرض المهام والدردشة من شريط المهام')
+}
+
 function Get-Plan($scan) {
-    $plan = @('Remove-Junk', 'Disable-StartupJunk', 'Disable-Ads', 'Reduce-Telemetry', 'Stop-BrowserBackground', 'Disable-Widgets', 'Tune-Responsiveness', 'Clear-Junk', 'Tune-Disk')
+    $plan = @('Remove-Junk', 'Disable-StartupJunk', 'Disable-Ads', 'Reduce-Telemetry', 'Stop-BrowserBackground', 'Disable-Widgets', 'Remove-Clutter', 'Tune-Responsiveness', 'Clear-Junk', 'Tune-Disk')
     if ($scan.ramGB -le 8 -or $scan.cores -le 4) { $plan += 'Lighten-Visuals' }
     if (-not $scan.laptop) { $plan += 'Set-FastPower'; $plan += 'Disable-Hibernation' }
     if ($Gaming -or $scan.gamer) { $plan += 'Tune-Gaming' }

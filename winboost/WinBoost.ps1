@@ -134,11 +134,23 @@ function Get-Scan {
 # ---------- tweaks ----------
 function Remove-Junk($scan) {
     foreach ($n in $scan.junkApps) {
-        Get-AppxPackage -AllUsers -Name $n | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue
-        [void]$script:done.Add("حذف تطبيق: $n")
-        [void]$script:changes.Add(@{ type = 'appx'; name = $n })
+        # one stubborn app (e.g. 0x80070002 on Windows 10) must not stop the rest
+        $ok = $true
+        foreach ($pkg in Get-AppxPackage -AllUsers -Name $n) {
+            try { Remove-AppxPackage -Package $pkg.PackageFullName -AllUsers -ErrorAction Stop }
+            catch {
+                try { Remove-AppxPackage -Package $pkg.PackageFullName -ErrorAction Stop }
+                catch { $ok = $false; Write-Host "  could not remove $n : $($_.Exception.Message.Split([Environment]::NewLine)[0])" }
+            }
+        }
+        if ($ok) {
+            [void]$script:done.Add("حذف تطبيق: $n")
+            [void]$script:changes.Add(@{ type = 'appx'; name = $n })
+        }
     }
-    Get-AppxProvisionedPackage -Online | Where-Object DisplayName -in $JunkApps | Remove-AppxProvisionedPackage -Online -AllUsers -ErrorAction SilentlyContinue | Out-Null
+    foreach ($pp in Get-AppxProvisionedPackage -Online | Where-Object DisplayName -in $JunkApps) {
+        try { Remove-AppxProvisionedPackage -Online -AllUsers -PackageName $pp.PackageName -ErrorAction Stop | Out-Null } catch { }
+    }
 }
 
 function Disable-StartupJunk {

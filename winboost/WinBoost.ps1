@@ -5,7 +5,7 @@
     -DryRun      show the scan and the plan, change nothing
     -After       (run by a one-time logon task) measure again and write the before/after report
     -Undo        put back everything the journal recorded
-    -Gaming      gaming tier: also Game Mode, no background capture, raw mouse, GPU scheduling; keeps game launchers at startup
+    -Gaming      force the gaming extras (otherwise added automatically when a game launcher or a dedicated GPU is found): also Game Mode, no background capture, raw mouse, GPU scheduling; keeps game launchers at startup
   Never touches: Defender, Windows Update, UAC, drivers, user files, activation.
 #>
 param([switch]$DryRun, [switch]$After, [switch]$Undo, [switch]$Gaming)
@@ -115,6 +115,15 @@ function Get-StartupItems {
     }
 }
 
+# why this looks like a gaming PC (empty = not one): an installed launcher or a dedicated graphics card
+function Get-GamerSign {
+    $apps = Get-ItemProperty 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*', 'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*', 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*' -ErrorAction SilentlyContinue |
+        Where-Object { $_.DisplayName -match '^(Steam|Epic Games Launcher|Battle\.net|Riot Client|Riot Vanguard|VALORANT|League of Legends|Ubisoft Connect|EA app|GOG GALAXY.*)$' } | Select-Object -ExpandProperty DisplayName
+    if (-not $apps -and (Test-Path 'HKCU:\Software\Valve\Steam')) { $apps = 'Steam' }
+    $gpu = Get-CimInstance Win32_VideoController | Where-Object Name -match 'GeForce|RTX|GTX|Radeon RX|Radeon Pro|Arc A' | Select-Object -ExpandProperty Name
+    @($apps) + @($gpu) | Where-Object { $_ } | Select-Object -Unique
+}
+
 function Get-Scan {
     $os = Get-CimInstance Win32_OperatingSystem
     $c  = Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='C:'"
@@ -131,6 +140,7 @@ function Get-Scan {
         startupOn  = @(Get-StartupItems | Where-Object enabled).Count
         junkApps   = @(Get-AppxPackage -AllUsers | Where-Object Name -in $JunkApps | Select-Object -ExpandProperty Name -Unique)
         processes  = @(Get-Process).Count
+        gamer      = @(Get-GamerSign)
     }
 }
 
@@ -252,7 +262,7 @@ function Get-Plan($scan) {
     $plan = @('Remove-Junk', 'Disable-StartupJunk', 'Disable-Ads', 'Reduce-Telemetry', 'Clear-Junk')
     if ($scan.ramGB -le 8 -or $scan.cores -le 4) { $plan += 'Lighten-Visuals' }
     if (-not $scan.laptop) { $plan += 'Set-FastPower' }
-    if ($Gaming) { $plan += 'Tune-Gaming' }
+    if ($Gaming -or $scan.gamer) { $plan += 'Tune-Gaming' }
     $plan
 }
 
@@ -264,7 +274,7 @@ function Write-Report($j, $afterScan) {
             (Row 'تطبيقات غير ضرورية مثبتة' $b.junkApps.Count $afterScan.junkApps.Count) +
             (Row 'المساحة الفارغة في C:' "$($b.freeGB) GB" "$($afterScan.freeGB) GB")
     $top = ($afterScan.topApps | ForEach-Object { "<tr><td><bdi>$([Net.WebUtility]::HtmlEncode($_.name))</bdi></td><td><bdi>$($_.ramMB) MB</bdi></td><td><bdi>$($_.cpu)%</bdi></td></tr>" }) -join ''
-    $tier = if ($j.gaming) { ' · باقة الألعاب' } else { '' }
+    $tier = if ($j.gaming) { ' · وضع الألعاب' } else { '' }
     $items = ($j.done | ForEach-Object { "<li>$([Net.WebUtility]::HtmlEncode($_))</li>" }) -join ''
     $html = @"
 <!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><title>تقرير تسريع الجهاز</title>
@@ -329,6 +339,7 @@ if ($After) {
 
 $scan = Get-Scan
 $plan = Get-Plan $scan
+$Gaming = [bool]($Gaming -or $scan.gamer)   # the startup filter and the journal read this
 Write-Host ($scan | ConvertTo-Json -Depth 4)
 Write-Host "Plan: $($plan -join ', ')"
 if ($DryRun) { Stop-Transcript | Out-Null; exit }

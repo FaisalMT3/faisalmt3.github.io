@@ -47,31 +47,35 @@ $GameLaunchers = 'Discord|Steam|EpicGames|Battle\.net|Ubisoft|EADM|Origin'
 # ---------- journal: every change records the old value so -Undo can put it back ----------
 $script:changes = New-Object System.Collections.ArrayList
 $script:done    = New-Object System.Collections.ArrayList   # human-readable list for the report
+$script:failed  = New-Object System.Collections.ArrayList   # what did not work on this PC; shown in the report, never stops the run
+function Add-Fail($what, $err) { $m = "$what : $("$err".Split([Environment]::NewLine)[0])"; [void]$script:failed.Add($m); Write-Host "  failed: $m" }
+function Try-Get($what, [scriptblock]$sb, $default = $null) { try { & $sb } catch { Add-Fail "scan $what" $_; $default } }
 
 function Save-Journal($extra) {
-    $o = [ordered]@{ changes = $script:changes; done = $script:done }
+    $o = [ordered]@{ changes = $script:changes; done = $script:done; failed = $script:failed }
     if ($extra) { foreach ($k in $extra.Keys) { $o[$k] = $extra[$k] } }
     $o | ConvertTo-Json -Depth 6 | Set-Content -Encoding UTF8 $Journal
 }
 
 function Set-Reg($path, $name, $value, $kind = 'DWord') {
-    if (-not (Test-Path $path)) { New-Item -Force $path | Out-Null }
-    $key = Get-Item $path
+    try { if (-not (Test-Path $path)) { New-Item -Force $path -ErrorAction Stop | Out-Null }; $key = Get-Item $path -ErrorAction Stop }
+    catch { Add-Fail "setting $name" $_; return }
     $old = $key.GetValue($name, $null, 'DoNotExpandEnvironmentNames')
     $oldKind = if ($null -ne $old) { "$($key.GetValueKind($name))" } else { $null }
     if ($null -ne $old -and "$old" -eq "$value" -and $oldKind -eq $kind) { return }
     if ($old -is [byte[]]) { $old = [int[]]$old }
+    try { New-ItemProperty -Force -Path $path -Name $name -Value $value -PropertyType $kind -ErrorAction Stop | Out-Null }
+    catch { Add-Fail "setting $name" $_; return }
     [void]$script:changes.Add(@{ type = 'reg'; path = $path; name = $name; old = $old; kind = $oldKind })
-    New-ItemProperty -Force -Path $path -Name $name -Value $value -PropertyType $kind | Out-Null
 }
 
 function Set-Svc($name, $startType) {
     $s = Get-CimInstance Win32_Service -Filter "Name='$name'"
     if (-not $s -or $s.StartMode -eq $startType) { return }
     $old = if ($s.StartMode -eq 'Auto') { 'Automatic' } else { $s.StartMode }
+    try { Set-Service $name -StartupType $startType -ErrorAction Stop } catch { Add-Fail "service $name" $_; return }
     [void]$script:changes.Add(@{ type = 'svc'; name = $name; old = $old })
     Stop-Service $name -Force -ErrorAction SilentlyContinue
-    Set-Service $name -StartupType $startType
 }
 
 # ---------- scan ----------
@@ -148,23 +152,25 @@ function Get-JunkApps($isGamer) {
 }
 
 function Get-Scan {
-    $os = Get-CimInstance Win32_OperatingSystem
-    $c  = Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='C:'"
-    $sys = Get-PhysicalDisk -ErrorAction SilentlyContinue | Where-Object DeviceId -eq ((Get-Partition -DriveLetter C).DiskNumber)
+    $os = Try-Get 'os' { Get-CimInstance Win32_OperatingSystem -ErrorAction Stop }
+    $g  = @(Try-Get 'gamer' { Get-GamerSign } @())
     [ordered]@{
         at         = (Get-Date).ToString('s')
         os         = "$($os.Caption) $($os.Version)"
-        ramGB      = [math]::Round($os.TotalVisibleMemorySize / 1MB, 1)
-        cores      = (Get-CimInstance Win32_Processor | Measure-Object NumberOfLogicalProcessors -Sum).Sum
-        laptop     = [bool](Get-CimInstance Win32_Battery)
-        disk       = if ($sys) { "$($sys.MediaType)" } else { 'Unknown' }
-        freeGB     = [math]::Round($c.FreeSpace / 1GB, 2)
-        boot       = Get-BootMs
-        startupOn  = @(Get-StartupItems | Where-Object enabled).Count
-        junkApps   = @(Get-JunkApps ($Gaming -or @(Get-GamerSign).Count))
+        ramGB      = Try-Get 'ram' { [math]::Round($os.TotalVisibleMemorySize / 1MB, 1) } 0
+        cores      = Try-Get 'cpu' { (Get-CimInstance Win32_Processor -ErrorAction Stop | Measure-Object NumberOfLogicalProcessors -Sum).Sum } 0
+        laptop     = Try-Get 'battery' { [bool](Get-CimInstance Win32_Battery -ErrorAction Stop) } $false
+        disk       = Try-Get 'disk' { $d = Get-PhysicalDisk -ErrorAction Stop | Where-Object DeviceId -eq ((Get-Partition -DriveLetter C -ErrorAction Stop).DiskNumber); if ($d) { "$($d.MediaType)" } else { 'Unknown' } } 'Unknown'
+        freeGB     = Try-Get 'free space' { [math]::Round((Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='C:'" -ErrorAction Stop).FreeSpace / 1GB, 2) } 0
+        boot       = Try-Get 'boot time' { Get-BootMs }
+        startupOn  = Try-Get 'startup' { @(Get-StartupItems | Where-Object enabled).Count } 0
+        junkApps   = @(Try-Get 'apps' { Get-JunkApps ($Gaming -or $g.Count) } @())
         processes  = @(Get-Process).Count
-        gamer      = @(Get-GamerSign)
-        av         = @(Get-CimInstance -Namespace root/SecurityCenter2 -ClassName AntiVirusProduct -ErrorAction SilentlyContinue | Where-Object displayName -notmatch 'Defender' | Select-Object -ExpandProperty displayName -Unique)
+        gamer      = $g
+        av         = @(Try-Get 'antivirus' { Get-CimInstance -Namespace root/SecurityCenter2 -ClassName AntiVirusProduct -ErrorAction Stop | Where-Object displayName -notmatch 'Defender' | Select-Object -ExpandProperty displayName -Unique } @())
+        displays   = @(Try-Get 'display' { Get-CimInstance Win32_VideoController -ErrorAction Stop | Where-Object CurrentRefreshRate | ForEach-Object { @{ name = $_.Name; hz = [int]$_.CurrentRefreshRate; maxHz = [int]$_.MaxRefreshRate } } } @())
+        memory     = Try-Get 'memory sticks' { $m = @(Get-CimInstance Win32_PhysicalMemory -ErrorAction Stop); @{ sticks = $m.Count; mhz = [int]($m | Measure-Object ConfiguredClockSpeed -Minimum).Minimum; type = [int]($m | Select-Object -First 1).SMBIOSMemoryType } }
+        gpuDriver  = @(Try-Get 'graphics driver' { Get-CimInstance Win32_VideoController -ErrorAction Stop | Where-Object Name -match 'NVIDIA|Radeon RX|Radeon Pro|Arc A' | ForEach-Object { @{ name = $_.Name; date = $_.DriverDate.ToString('yyyy-MM-dd'); version = $_.DriverVersion } } } @())
     }
 }
 
@@ -177,7 +183,7 @@ function Remove-Junk($scan) {
             try { Remove-AppxPackage -Package $pkg.PackageFullName -AllUsers -ErrorAction Stop }
             catch {
                 try { Remove-AppxPackage -Package $pkg.PackageFullName -ErrorAction Stop }
-                catch { $ok = $false; Write-Host "  could not remove $n : $($_.Exception.Message.Split([Environment]::NewLine)[0])" }
+                catch { $ok = $false; Add-Fail "remove app $n" $_ }
             }
         }
         if ($ok) {
@@ -259,7 +265,7 @@ function Clear-Junk {
     Write-Host 'Cleaning old Windows components (5-15 min)...'
     Dism.exe /Online /Cleanup-Image /StartComponentCleanup /Quiet | Out-Null
     $gb = [math]::Round(((Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='C:'").FreeSpace - $before) / 1GB, 2)
-    [void]$script:done.Add("تنظيف الملفات المؤقتة وبقايا التحديثات ($gb GB)")
+    [void]$script:done.Add($(if ($gb -gt 0) { "تنظيف الملفات المؤقتة وبقايا التحديثات ($gb GB)" } else { 'تنظيف الملفات المؤقتة وبقايا التحديثات' }))
 }
 
 function Tune-Gaming {
@@ -340,7 +346,7 @@ function Tune-Responsiveness($scan) {
             @('\Microsoft\Windows\Autochk\', 'Proxy'))) {
         $task = Get-ScheduledTask -TaskPath $t[0] -TaskName $t[1] -ErrorAction SilentlyContinue
         if ($task -and $task.State -ne 'Disabled') {
-            try { Disable-ScheduledTask -TaskPath $t[0] -TaskName $t[1] -ErrorAction Stop | Out-Null; [void]$script:changes.Add(@{ type = 'task'; path = $t[0]; name = $t[1] }) } catch { }
+            try { Disable-ScheduledTask -TaskPath $t[0] -TaskName $t[1] -ErrorAction Stop | Out-Null; [void]$script:changes.Add(@{ type = 'task'; path = $t[0]; name = $t[1] }) } catch { Add-Fail "task $($t[1])" $_ }
         }
     }
     [void]$script:done.Add('أولوية أعلى للبرنامج المفتوح أمامك، وقوائم أسرع، وإيقاف مهام القياس المجدولة')
@@ -349,13 +355,13 @@ function Tune-Responsiveness($scan) {
 function Tune-Disk($scan) {
     if ($scan.disk -eq 'SSD') {
         Set-Svc 'SysMain' 'Disabled'
-        try { Optimize-Volume -DriveLetter C -ReTrim -ErrorAction Stop } catch { }
+        try { Optimize-Volume -DriveLetter C -ReTrim -ErrorAction Stop } catch { Add-Fail 'SSD TRIM' $_ }
         [void]$script:done.Add('صيانة قرص SSD (TRIM) وإيقاف خدمة SysMain غير اللازمة معه')
     }
     elseif ($scan.disk -eq 'HDD') {
         Set-Svc 'WSearch' 'Manual'
         Write-Host 'Defragmenting the hard drive (can take a while)...'
-        try { Optimize-Volume -DriveLetter C -Defrag -ErrorAction Stop } catch { }
+        try { Optimize-Volume -DriveLetter C -Defrag -ErrorAction Stop } catch { Add-Fail 'defrag' $_ }
         [void]$script:done.Add('إلغاء تجزئة القرص الصلب وتخفيف فهرسة البحث عليه')
     }
 }
@@ -372,10 +378,24 @@ function Remove-Clutter {
     [void]$script:done.Add('إخفاء أزرار Copilot وعرض المهام والدردشة من شريط المهام')
 }
 
+# Win11 "Power mode" on the charger only; on battery Windows keeps its own choice
+function Set-LaptopPlugged {
+    Set-Reg 'HKLM:\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes' 'ActiveOverlayAcPowerScheme' 'ded574b5-45a0-4f42-8737-46345c09c238' 'String'
+    [void]$script:done.Add('وضع «أفضل أداء» عندما يكون اللابتوب على الشاحن (البطارية بدون تغيير)')
+}
+
+function Enable-StorageSense {
+    $ss = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy'
+    Set-Reg $ss '01' 1      # on
+    Set-Reg $ss '2048' 30   # every month
+    Set-Reg $ss '04' 1      # delete temp files apps don't use
+    [void]$script:done.Add('تشغيل «مستشعر التخزين» لتنظيف الملفات المؤقتة تلقائياً كل شهر')
+}
+
 function Get-Plan($scan) {
-    $plan = @('Remove-Junk', 'Disable-StartupJunk', 'Disable-Ads', 'Reduce-Telemetry', 'Stop-BrowserBackground', 'Disable-Widgets', 'Remove-Clutter', 'Tune-Responsiveness', 'Clear-Junk', 'Tune-Disk')
+    $plan = @('Remove-Junk', 'Disable-StartupJunk', 'Disable-Ads', 'Reduce-Telemetry', 'Stop-BrowserBackground', 'Disable-Widgets', 'Remove-Clutter', 'Enable-StorageSense', 'Tune-Responsiveness', 'Clear-Junk', 'Tune-Disk')
     if ($scan.ramGB -le 8 -or $scan.cores -le 4) { $plan += 'Lighten-Visuals' }
-    if (-not $scan.laptop) { $plan += 'Set-FastPower'; $plan += 'Disable-Hibernation' }
+    if (-not $scan.laptop) { $plan += 'Set-FastPower'; $plan += 'Disable-Hibernation' } else { $plan += 'Set-LaptopPlugged' }
     if ($Gaming -or $scan.gamer) { $plan += 'Tune-Gaming' }
     $plan
 }
@@ -393,8 +413,23 @@ function Write-Report($j, $afterScan) {
     $notes = @()
     $trial = @($b.av) -match 'McAfee|Norton'
     if ($trial) { $notes += "وجدنا برنامج الحماية <b>$([Net.WebUtility]::HtmlEncode($trial[0]))</b>. هذه البرامج تأتي غالباً كنسخة تجريبية مع الأجهزة الجديدة وتبطئها كثيراً. إن لم تكن مشتركاً فيه، احذفه من الإعدادات ثم التطبيقات، ومكافح فيروسات ويندوز يعمل تلقائياً بعده." }
+    foreach ($d in @($b.displays)) {
+        # MaxRefreshRate comes from the driver; only trust it when it is a normal gaming rate
+        if ($d.maxHz -ge 75 -and $d.maxHz -le 500 -and $d.hz -lt $d.maxHz) { $notes += "شاشتك تعمل على <bdi>$($d.hz) Hz</bdi> بينما تدعم حتى <bdi>$($d.maxHz) Hz</bdi>. من الإعدادات ← النظام ← الشاشة ← إعدادات العرض المتقدمة اختر أعلى «معدل تحديث»: الحركة تصبح أنعم بشكل واضح." }
+    }
+    $mem = $b.memory
+    if ($mem -and $mem.mhz) {
+        if (($mem.type -eq 26 -and $mem.mhz -le 2666) -or ($mem.type -eq 34 -and $mem.mhz -le 4800)) { $notes += "الذاكرة تعمل على <bdi>$($mem.mhz) MHz</bdi> وهي السرعة الافتراضية. إن كانت ذاكرتك مكتوب عليها سرعة أعلى، فتفعيل XMP أو EXPO من إعدادات BIOS يرفع أداء الألعاب. (هذا الإعداد لا يمكن تغييره من ويندوز.)" }
+        if ($mem.sticks -eq 1) { $notes += 'في جهازك شريحة ذاكرة واحدة فقط. إضافة شريحة ثانية مطابقة (إن وُجد مكان) تشغّل الذاكرة بقناتين وتعطي فرقاً ملحوظاً، خصوصاً مع كروت الشاشة المدمجة.' }
+    }
+    foreach ($g in @($b.gpuDriver)) {
+        if ($g.date -and ([datetime]$g.date) -lt (Get-Date).AddDays(-180)) { $notes += "تعريف كرت الشاشة <bdi>$([Net.WebUtility]::HtmlEncode($g.name))</bdi> بتاريخ <bdi>$($g.date)</bdi>. حدّثه من برنامج NVIDIA App أو AMD Adrenalin أو موقع الشركة، التعريف الجديد يحسّن أداء الألعاب الحديثة." }
+    }
     if (@($j.plan) -contains 'Stop-BrowserBackground') { $notes += 'قد يظهر في إعدادات Edge أو Chrome سطر «يُدار بواسطة مؤسستك». هذا طبيعي وسببه فقط إعداد منع المتصفح من العمل في الخلفية، ويختفي عند التراجع.' }
     $notesHtml = if ($notes) { '<h2>ملاحظات</h2><ul>' + (($notes | ForEach-Object { "<li>$_</li>" }) -join '') + '</ul>' } else { '' }
+    $rpLine = if (@($j.failed) -match '^restore point') { 'تعذّر إنشاء نقطة استعادة على هذا الجهاز، لكن زر التراجع يعمل لأنه يعتمد على سجل WinBoost الخاص.' } else { 'تم أيضاً إنشاء نقطة استعادة للنظام باسم <b>WinBoost</b> قبل أي تغيير.' }
+    $failHtml = if (@($j.failed).Count) { '<h2>خطوات لم تنجح على هذا الجهاز</h2><p class="n">لم تؤثر على باقي الخطوات، وكل ما سواها تم تطبيقه.</p><ul>' + ((@($j.failed) | ForEach-Object { "<li><bdi>$([Net.WebUtility]::HtmlEncode($_))</bdi></li>" }) -join '') + '</ul>' } else { '' }
+    $topHtml = if ($top) { '<h2>أكثر البرامج استهلاكاً بعد التشغيل</h2><p class="n">برامجك المثبتة فقط (بدون ملفات ويندوز ومكافح الفيروسات). إن كان برنامج لا تستخدمه في أعلى القائمة، فإغلاقه أو حذفه يعطي أكبر فرق.</p><table><tr><th>البرنامج</th><th>الذاكرة</th><th>المعالج</th></tr>' + $top + '</table>' } else { '' }
     $items = ($j.done | ForEach-Object { "<li>$([Net.WebUtility]::HtmlEncode($_))</li>" }) -join ''
     $html = @"
 <!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><title>تقرير تسريع الجهاز</title>
@@ -405,14 +440,13 @@ table{border-collapse:collapse;width:100%}td,th{border:1px solid #ddd;padding:8p
 <p class="n" dir="ltr">$($b.os) · RAM $($b.ramGB) GB · $($env:COMPUTERNAME) · $((Get-Date).ToString('yyyy-MM-dd HH:mm'))</p>
 <h2>قبل وبعد</h2>
 <table><tr><th>المقياس</th><th>قبل</th><th>بعد</th></tr>$rows</table>
-<h2>أكثر البرامج استهلاكاً بعد التشغيل</h2>
-<p class="n">برامجك المثبتة فقط (بدون ملفات ويندوز ومكافح الفيروسات). إن كان برنامج لا تستخدمه في أعلى القائمة، فإغلاقه أو حذفه يعطي أكبر فرق.</p>
-<table><tr><th>البرنامج</th><th>الذاكرة</th><th>المعالج</th></tr>$top</table>
+$topHtml
 $notesHtml
 <h2>ما تم عمله</h2><ul>$items</ul>
+$failHtml
 <h2>للتراجع</h2>
 <p>شغّل اختصار <b>WinBoost Undo</b> على سطح المكتب لإرجاع كل الإعدادات. التطبيقات المحذوفة يمكن تثبيتها مجدداً من متجر مايكروسوفت.
-تم أيضاً إنشاء نقطة استعادة للنظام باسم <b>WinBoost</b> قبل أي تغيير.</p>
+$rpLine</p>
 <p class="n">لم يتم المساس بمكافح الفيروسات، تحديثات ويندوز، التعريفات أو ملفاتك الشخصية.</p></html>
 "@
     $path = Join-Path $Desktop 'WinBoost-Report.html'
@@ -430,26 +464,30 @@ if ($Undo) {
     }
     $j = Get-Content $Journal -Raw | ConvertFrom-Json
     $list = @($j.changes); [array]::Reverse($list)
+    $bad = 0
     foreach ($c in $list) {
+      try {
         switch ($c.type) {
             'reg' {
                 if ($null -eq $c.old) { Remove-ItemProperty -Path $c.path -Name $c.name -ErrorAction SilentlyContinue }
                 else {
                     $v = if ($c.kind -eq 'Binary') { [byte[]]$c.old } else { $c.old }
-                    New-ItemProperty -Force -Path $c.path -Name $c.name -Value $v -PropertyType $c.kind | Out-Null
+                    New-ItemProperty -Force -Path $c.path -Name $c.name -Value $v -PropertyType $c.kind -ErrorAction Stop | Out-Null
                 }
             }
-            'svc'   { Set-Service $c.name -StartupType $c.old; if ($c.old -eq 'Automatic') { Start-Service $c.name -ErrorAction SilentlyContinue } }
+            'svc'   { Set-Service $c.name -StartupType $c.old -ErrorAction Stop; if ($c.old -eq 'Automatic') { Start-Service $c.name -ErrorAction SilentlyContinue } }
             'power' { powercfg /setactive $c.old }
             'hib'   { powercfg /hibernate on }
             'task'  { Enable-ScheduledTask -TaskPath $c.path -TaskName $c.name -ErrorAction SilentlyContinue | Out-Null }
             'appx'  { Write-Host "Removed app (reinstall from Microsoft Store if needed): $($c.name)" }
         }
+      } catch { $bad++; Write-Host "  could not restore $($c.type) $($c.name): $_" }
     }
     Rename-Item $Journal "$Journal.undone-$(Get-Date -Format yyyyMMddHHmm)"
     Remove-Item (Join-Path $Desktop 'WinBoost Undo.lnk') -ErrorAction SilentlyContinue
     $n = @($list | Where-Object type -ne 'appx').Count
     Write-Host ''
+    if ($bad) { Write-Host "$bad item(s) could not be restored (listed above); the restore point WinBoost made can bring them back." }
     Write-Host "Done: $n settings restored to how they were before WinBoost. Removed apps can be reinstalled from the Microsoft Store."
     Write-Host "تم: إرجاع $n إعداد كما كان قبل التسريع. التطبيقات المحذوفة يمكن تثبيتها من متجر مايكروسوفت."
     Stop-Transcript | Out-Null
@@ -461,12 +499,14 @@ if ($Undo) {
 if ($After) {
     Unregister-ScheduledTask -TaskName WinBoostAfter -Confirm:$false -ErrorAction SilentlyContinue
     $j = Get-Content $Journal -Raw | ConvertFrom-Json
+    $Gaming = [bool]$j.gaming   # same junk-app rules as the run, so before/after compare like with like
     Start-Sleep 60   # let startup programs load before measuring what uses RAM/CPU
     $a = Get-Scan
-    $a['topApps'] = @(Get-TopApps)
+    $a['topApps'] = @(Try-Get 'programs using RAM/CPU' { Get-TopApps } @())
+    if ($script:failed.Count) { $j | Add-Member -Force failed (@($j.failed) + @($script:failed)) }
     $j | Add-Member -Force after $a
-    $j | ConvertTo-Json -Depth 6 | Set-Content -Encoding UTF8 $Journal
-    Start-Process (Write-Report $j $a)
+    try { $j | ConvertTo-Json -Depth 6 | Set-Content -Encoding UTF8 $Journal } catch { }
+    try { Start-Process (Write-Report $j $a) } catch { Write-Host "report failed: $_" }
     Stop-Transcript | Out-Null
     exit
 }
@@ -491,31 +531,38 @@ if (Test-Path $Journal) {
 # restore point first, or stop: no change without a way back
 Enable-ComputerRestore -Drive "$env:SystemDrive\" -ErrorAction SilentlyContinue
 $freq = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore'
-New-ItemProperty -Force $freq SystemRestorePointCreationFrequency -Value 0 -PropertyType DWord | Out-Null
+New-ItemProperty -Force $freq SystemRestorePointCreationFrequency -Value 0 -PropertyType DWord -ErrorAction SilentlyContinue | Out-Null
 try { Checkpoint-Computer -Description 'WinBoost' -RestorePointType MODIFY_SETTINGS -ErrorAction Stop }
-catch {
-    Write-Host "Could not create a restore point, nothing was changed: $_ / تعذر إنشاء نقطة استعادة، لم يتم تغيير أي شيء."
-    Stop-Transcript | Out-Null; Read-Host 'Press Enter to close / اضغط Enter للإغلاق'; exit 1
-}
+catch { Add-Fail 'restore point (the Undo button still works)' $_ }
 finally { Remove-ItemProperty $freq SystemRestorePointCreationFrequency -ErrorAction SilentlyContinue }
 
 foreach ($step in $plan) {
     Write-Host "== $step"
-    try { & $step $scan } catch { Write-Host "  skipped: $_" }
+    try { & $step $scan } catch { Add-Fail $step $_ }
     Save-Journal @{ before = $scan; plan = $plan; gaming = [bool]$Gaming; run = $run; appliedAt = (Get-Date).ToString('s') }
 }
 
-$ws = New-Object -ComObject WScript.Shell
-$lnk = $ws.CreateShortcut((Join-Path $Desktop 'WinBoost Undo.lnk'))
-$lnk.TargetPath = 'powershell.exe'
-$lnk.Arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$Self`" -Undo"
-$lnk.Save()
+try {
+    $lnk = (New-Object -ComObject WScript.Shell).CreateShortcut((Join-Path $Desktop 'WinBoost Undo.lnk'))
+    $lnk.TargetPath = 'powershell.exe'
+    $lnk.Arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$Self`" -Undo"
+    $lnk.Save()
+} catch { Add-Fail "Undo shortcut (run: powershell -File `"$Self`" -Undo)" $_ }
 
-$me = [Security.Principal.WindowsIdentity]::GetCurrent().Name
-$action  = New-ScheduledTaskAction -Execute powershell.exe -Argument "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$Self`" -After"
-$trigger = New-ScheduledTaskTrigger -AtLogOn -User $me
-$trigger.Delay = 'PT1M'
-Register-ScheduledTask -TaskName WinBoostAfter -Action $action -Trigger $trigger -RunLevel Highest -User $me -Force | Out-Null
+$reportLater = $true
+try {
+    $me = [Security.Principal.WindowsIdentity]::GetCurrent().Name
+    $action  = New-ScheduledTaskAction -Execute powershell.exe -Argument "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$Self`" -After"
+    $trigger = New-ScheduledTaskTrigger -AtLogOn -User $me
+    $trigger.Delay = 'PT1M'
+    Register-ScheduledTask -TaskName WinBoostAfter -Action $action -Trigger $trigger -RunLevel Highest -User $me -Force -ErrorAction Stop | Out-Null
+} catch { Add-Fail 'after-restart report task (report written now instead)' $_; $reportLater = $false }
+
+Save-Journal @{ before = $scan; plan = $plan; gaming = [bool]$Gaming; run = $run; appliedAt = (Get-Date).ToString('s') }
+if (-not $reportLater) {
+    try { $j = Get-Content $Journal -Raw | ConvertFrom-Json; Start-Process (Write-Report $j $scan) } catch { Add-Fail 'report' $_ }
+}
+if ($script:failed.Count) { Write-Host ''; Write-Host "$($script:failed.Count) step(s) did not work on this PC; they are listed in the report. Everything else was applied." }
 
 Stop-Transcript | Out-Null
 Write-Host ''

@@ -182,7 +182,6 @@ function Disable-Ads {
     Set-Reg 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' 'Start_IrisRecommendations' 0
     Set-Reg 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' 'ShowSyncProviderNotifications' 0
     Set-Reg 'HKCU:\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo' 'Enabled' 0
-    Set-Reg 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent' 'DisableWindowsConsumerFeatures' 1
     [void]$script:done.Add('إيقاف الإعلانات والاقتراحات وتثبيت التطبيقات الدعائية تلقائياً')
 }
 
@@ -275,6 +274,7 @@ function Write-Report($j, $afterScan) {
             (Row 'المساحة الفارغة في C:' "$($b.freeGB) GB" "$($afterScan.freeGB) GB")
     $top = ($afterScan.topApps | ForEach-Object { "<tr><td><bdi>$([Net.WebUtility]::HtmlEncode($_.name))</bdi></td><td><bdi>$($_.ramMB) MB</bdi></td><td><bdi>$($_.cpu)%</bdi></td></tr>" }) -join ''
     $tier = if ($j.gaming) { ' · وضع الألعاب' } else { '' }
+    if ([int]$j.run -gt 1) { $tier += " · إعادة التسريع رقم $($j.run)" }
     $items = ($j.done | ForEach-Object { "<li>$([Net.WebUtility]::HtmlEncode($_))</li>" }) -join ''
     $html = @"
 <!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><title>تقرير تسريع الجهاز</title>
@@ -344,9 +344,14 @@ Write-Host ($scan | ConvertTo-Json -Depth 4)
 Write-Host "Plan: $($plan -join ', ')"
 if ($DryRun) { Stop-Transcript | Out-Null; exit }
 
+# Re-run (e.g. after a big Windows update): keep the earlier changes in the journal so -Undo,
+# which walks it newest-first, still ends at the PC's original values; this run only adds what Windows put back
+$run = 1
 if (Test-Path $Journal) {
-    Write-Host 'WinBoost already ran on this PC. Run with -Undo first to start over. / تم التسريع مسبقاً على هذا الجهاز.'
-    Stop-Transcript | Out-Null; Read-Host 'Press Enter to close / اضغط Enter للإغلاق'; exit 1
+    $prev = Get-Content $Journal -Raw | ConvertFrom-Json
+    foreach ($c in $prev.changes) { [void]$script:changes.Add($c) }
+    $run = 1 + [math]::Max(1, [int]$prev.run)   # journals from before re-runs existed have no run number
+    Write-Host "Re-run #$($run): re-applying what Windows changed back."
 }
 
 # restore point first, or stop: no change without a way back
@@ -363,7 +368,7 @@ finally { Remove-ItemProperty $freq SystemRestorePointCreationFrequency -ErrorAc
 foreach ($step in $plan) {
     Write-Host "== $step"
     try { & $step $scan } catch { Write-Host "  skipped: $_" }
-    Save-Journal @{ before = $scan; plan = $plan; gaming = [bool]$Gaming; appliedAt = (Get-Date).ToString('s') }
+    Save-Journal @{ before = $scan; plan = $plan; gaming = [bool]$Gaming; run = $run; appliedAt = (Get-Date).ToString('s') }
 }
 
 $ws = New-Object -ComObject WScript.Shell

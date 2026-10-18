@@ -1,5 +1,3 @@
-# Gaming tier one-liner: irm <url>/game.ps1 | iex
-# Downloads WinBoost.ps1 and runs it as admin; it copies itself to Program Files (admin-only) for the undo and report steps.
-$f = "$env:TEMP\WinBoost.ps1"
-Invoke-RestMethod 'https://faisalmt3.github.io/winboost/WinBoost.ps1' -OutFile $f
-Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$f`" -Gaming" -Verb RunAs
+# WinBoost moved: each paid order now gets its own code (https://winboost.faisalfahadmt3.workers.dev/<CODE>)
+Write-Host 'This WinBoost link has changed. Ask the seller for your personal code.' -ForegroundColor Yellow
+Write-Host ([Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('2YfYsNinINin2YTYsdin2KjYtyDYqti62YrZkdixLiDYp9i32YTYqCDYsdmF2LLZgyDYp9mE2K7Yp9i1INmF2YYg2KfZhNio2KfYpti5Lg=='))) -ForegroundColor Yellow

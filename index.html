@@ -67,7 +67,7 @@ bdi.d, .mono { font-family: var(--mono); font-weight: 400; }
 .nav { position: sticky; top: 0; z-index: 20; background: rgb(11 11 10 / .92); border-block-end: 1px solid var(--line); }
 .nav .wrap { display: flex; align-items: center; gap: 2rem; min-height: 72px; }
 .brand { font-weight: 800; font-size: 1.05rem; text-decoration: none; white-space: nowrap; }
-.nav ul { display: flex; gap: 1.75rem; list-style: none; margin: 0; padding: 0; margin-inline-start: auto; }
+.nav ul { display: flex; gap: clamp(1rem, 1.9vw, 1.75rem); white-space: nowrap; list-style: none; margin: 0; padding: 0; margin-inline-start: auto; }
 .nav ul a { display: inline-block; padding-block: .6rem; text-decoration: none; color: var(--mute); transition: color .2s; }
 .nav ul a:hover { color: var(--ink); }
 .nav .btn { min-height: 44px; padding: .5rem 1.1rem; }
@@ -157,6 +157,8 @@ section { padding-block: clamp(5rem, 12vw, 10rem) 0; }
 
 @media (max-width: 1024px) {
   .hero-copy, .reel { grid-column: 1 / -1; }
+  .nav ul { display: none; }
+  .nav .wrap { justify-content: space-between; }
   .hero p { max-width: 44ch; }
   .stage, .facts, .tamwil-foot { grid-column: 1 / -1; grid-row: auto; }
   .stage { padding-block-end: 4rem; }
@@ -165,8 +167,6 @@ section { padding-block: clamp(5rem, 12vw, 10rem) 0; }
 @media (max-width: 767px) {
   body { font-size: 1rem; }
   .hero h1 { font-size: clamp(1.7rem, 7.4vw, 2.6rem); }
-  .nav ul { display: none; }
-  .nav .wrap { justify-content: space-between; }
   .reel figcaption { flex-direction: column; gap: 0; }
   .stage .phone { width: 30%; inset-inline-end: 0; }
   .ctas .btn { flex: 1 1 100%; justify-content: center; }
@@ -204,8 +204,10 @@ section { padding-block: clamp(5rem, 12vw, 10rem) 0; }
     <a class="brand" href="#top">فيصل فهد المطيري</a>
     <ul>
       <li><a href="#tamwil">قسطي</a></li>
+      <li><a href="#aurum">أوروم فالي</a></li>
       <li><a href="#whatsapp">أتمتة واتساب</a></li>
       <li><a href="#winboost">تسريع ويندوز</a></li>
+      <li><a href="#cards">بطاقات المحفظة</a></li>
       <li><a href="#concepts">التصاميم</a></li>
     </ul>
     <a class="btn btn-solid" href="https://wa.me/966549978811"><svg class="icon" aria-hidden="true"><use href="#i-wa"/></svg>واتساب</a>
@@ -251,6 +253,28 @@ section { padding-block: clamp(5rem, 12vw, 10rem) 0; }
       <div class="tamwil-foot">
         <a class="btn btn-line" href="https://qisti.app" target="_blank" rel="noopener">زُر الموقع<svg class="icon" aria-hidden="true"><use href="#i-out"/></svg></a>
         <p class="note">اللقطات ببيانات تجريبية، لأن النظام يحمل بيانات عملاء حقيقية.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="aurum" aria-labelledby="aurum-h">
+    <div class="wrap tamwil">
+      <div class="head">
+        <h2 id="aurum-h">أوروم فالي</h2>
+        <p>موقع تعريفي صممته وبنيته لشركة سعودية تجمع زيوت الطعام المستعملة وتورّدها للمصانع. عمل مدفوع لعميل، وشغّال اليوم على دومين الشركة.</p>
+      </div>
+      <div class="stage">
+        <img class="desk" src="assets/work/aurum-desktop.webp" width="1440" height="900" loading="lazy" alt="الصفحة الرئيسية لموقع أوروم فالي على الكمبيوتر: اسم الشركة فوق لقطة ميناء وقت الغروب">
+        <img class="phone" src="assets/work/aurum-phone.webp" width="585" height="1266" loading="lazy" alt="موقع أوروم فالي على الجوال">
+      </div>
+      <ul class="facts">
+        <li>نسخة عربية ونسخة إنجليزية، وكل وحدة باتجاهها الصحيح.</li>
+        <li>صفحة رئيسية وصفحة تواصل، بألوان الشركة وشعارها.</li>
+        <li>فيديو في الواجهة، ويشتغل على الجوال والكمبيوتر.</li>
+        <li>ربطت الدومين، وجهّزت بريد رسمي باسم الشركة.</li>
+      </ul>
+      <div class="tamwil-foot">
+        <a class="btn btn-line" href="https://aurumvalley.sa/ar/" target="_blank" rel="noopener">زُر الموقع<svg class="icon" aria-hidden="true"><use href="#i-out"/></svg></a>
       </div>
     </div>
   </section>
@@ -306,6 +330,28 @@ section { padding-block: clamp(5rem, 12vw, 10rem) 0; }
       <div class="tamwil-foot">
         <a class="btn btn-line" href="https://wa.me/966549978811"><svg class="icon" aria-hidden="true"><use href="#i-wa"/></svg>اطلب تسريع جهازك</a>
         <p class="note">التقرير في الصورة ببيانات تجريبية.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="cards" aria-labelledby="cards-h">
+    <div class="wrap tamwil">
+      <div class="head">
+        <h2 id="cards-h">بطاقات أدعية للمحفظة</h2>
+        <p>22 بطاقة دعاء وذِكر سوّيتها لعميل يبيعها في متجره على سلة. المشتري يضغط الرابط، والبطاقة تنضاف لمحفظة الآيفون <bdi>(Apple Wallet)</bdi> وتبقى معه.</p>
+      </div>
+      <div class="stage">
+        <img class="desk" src="assets/work/wallet-cards.webp" width="1600" height="1516" loading="lazy" alt="ست بطاقات من المجموعة، كل بطاقة بلونها: أذكار المساء، أذكار ما بعد الصلاة، تحصين النفس والأهل، دعاء الاختبار، دعاء للوالدين، والصلاة الإبراهيمية">
+      </div>
+      <ul class="facts">
+        <li>كل دعاء في بطاقة مستقلة، بلونها وعنوانها.</li>
+        <li>تنضاف بضغطة من الرابط، بدون تحميل تطبيق.</li>
+        <li>رابط لكل بطاقة، يحطّه العميل في منتجه على سلة.</li>
+        <li>بدأ الطلب بـ 15 بطاقة، ورجع العميل وطلب 7 زيادة.</li>
+      </ul>
+      <div class="tamwil-foot">
+        <a class="btn btn-line" href="https://wa.me/966549978811"><svg class="icon" aria-hidden="true"><use href="#i-wa"/></svg>اطلب بطاقات لمتجرك</a>
+        <p class="note">عمل مدفوع لعميل. المعروض نماذج من البطاقات.</p>
       </div>
     </div>
   </section>

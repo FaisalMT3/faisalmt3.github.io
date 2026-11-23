@@ -6,117 +6,138 @@
 <title>فيصل فهد المطيري · مواقع وأنظمة للأنشطة في الرياض</title>
 <meta name="description" content="مطوّر من الرياض: مواقع للأنشطة، وأنظمة تذكّر العملاء بمدفوعاتهم عبر واتساب وتحصّلها. شوف الأعمال وراسلني.">
 <meta name="author" content="فيصل فهد المطيري">
-<meta name="theme-color" content="#0B0B0A">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%230B0B0A%27/%3E%3Ctext x=%2716%27 y=%2723%27 font-size=%2720%27 text-anchor=%27middle%27 fill=%27%23F2EFE8%27 font-family=%27sans-serif%27%3EF%3C/text%3E%3C/svg%3E">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%23000%27/%3E%3Ctext x=%2716%27 y=%2723%27 font-size=%2720%27 text-anchor=%27middle%27 fill=%27%23F2EFE8%27 font-family=%27sans-serif%27%3EF%3C/text%3E%3C/svg%3E">
 <meta property="og:title" content="فيصل فهد المطيري · مواقع وأنظمة للأنشطة">
 <meta property="og:description" content="مواقع تجيب الزباين، وأنظمة تشتغل عنك.">
 <meta property="og:image" content="https://faisalmt3.github.io/assets/reel-poster.webp">
 <meta property="og:locale" content="ar_SA">
 <link rel="preload" href="assets/fonts/alexandria-ar.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/reel-poster.webp" as="image">
+<script type="importmap">{ "imports": { "three": "./assets/js/three.module.min.js", "three/addons/": "./assets/js/jsm/" } }</script>
 <style>
 @font-face { font-family: "Alexandria"; src: url(assets/fonts/alexandria-ar.woff2) format("woff2"); font-weight: 300 900; font-display: swap;
   unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC; }
 @font-face { font-family: "Alexandria"; src: url(assets/fonts/alexandria-lat.woff2) format("woff2"); font-weight: 300 900; font-display: swap;
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 @font-face { font-family: "JetBrains Mono"; src: url(assets/fonts/jbmono-lat.woff2) format("woff2"); font-weight: 400 500; font-display: swap; }
+@property --ang { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
 
 :root {
-  --bg: #0B0B0A;
-  --ink: #F4F4F1;
-  --mute: #8C8C86;
-  --soft: #C9C9C3;
-  --line: rgb(244 244 241 / .14);
-  --raise: #161615;
-  --r: 4px;
-  --gut: clamp(1.25rem, 4vw, 4rem);
-  --max: 1440px;
-  --sans: "Alexandria", system-ui, sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --bg: #000; --ink: #F5F5F2; --mute: #8E8E88; --soft: #CFCFC9; --line: rgb(245 245 242 / .14); --raise: #0E0E0F;
+  --a1: #5B8CFF; --a2: #A9F1FF;
+  --r: 14px; --gut: clamp(1.25rem, 4vw, 4rem); --max: 1440px;
+  --sans: "Alexandria", system-ui, sans-serif; --mono: "JetBrains Mono", ui-monospace, monospace;
   --ease: cubic-bezier(.16, 1, .3, 1);
-  --tile-h: clamp(300px, 32vw, 500px);
   color-scheme: dark;
 }
 *, *::before, *::after { box-sizing: border-box; }
-html { background: var(--bg); color: var(--ink); scroll-behavior: smooth; scrollbar-color: #3a3a37 var(--bg); }
+html { background: var(--bg); color: var(--ink); scrollbar-color: #333 #000; }
 body { margin: 0; font: 300 1.0625rem/1.8 var(--sans); overflow-x: clip; -webkit-font-smoothing: antialiased; }
-button, input, select, textarea { font: inherit; }
-img, video { display: block; max-width: 100%; height: auto; }
+img { display: block; max-width: 100%; height: auto; }
 a { color: inherit; text-underline-offset: .3em; text-decoration-thickness: 1px; }
-::selection { background: var(--ink); color: var(--bg); }
-:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: var(--r); }
 h1, h2, h3, p { margin: 0; }
-h1, h2 { font-weight: 900; line-height: 1.25; text-wrap: balance; }
+h1, h2, h3 { font-weight: 900; line-height: 1.3; text-wrap: balance; }
 bdi { white-space: nowrap; }
-bdi.d, .mono { font-family: var(--mono); font-weight: 400; }
+.mono { font-family: var(--mono); font-weight: 400; }
+::selection { background: var(--a1); color: #000; }
+:focus-visible { outline: 2px solid var(--a2); outline-offset: 4px; border-radius: 6px; }
 .wrap { width: min(100% - 2 * var(--gut), var(--max)); margin-inline: auto; }
 .icon { width: 1.25em; height: 1.25em; flex: none; }
-.skip { position: absolute; inset-inline-start: var(--gut); top: -4rem; z-index: 30; background: var(--ink); color: var(--bg); padding: .5rem 1rem; border-radius: var(--r); }
+.skip { position: absolute; inset-inline-start: var(--gut); top: -4rem; z-index: 60; background: var(--ink); color: #000; padding: .5rem 1rem; border-radius: 8px; }
 .skip:focus { top: 1rem; }
+section[id], div[id] { scroll-margin-top: 5rem; }
 
-/* Buttons */
-.btn { display: inline-flex; align-items: center; gap: .6rem; min-height: 48px; padding: .7rem 1.4rem; border-radius: var(--r);
-  font-weight: 600; text-decoration: none; border: 1px solid var(--ink); transition: background .25s var(--ease), color .25s var(--ease), transform .15s var(--ease); }
-.btn-solid { background: var(--ink); color: var(--bg); }
-.btn-solid:hover { background: transparent; color: var(--ink); }
-.btn-line { color: var(--ink); border-color: var(--line); }
+/* Buttons: a light runs around the main one */
+.btn { position: relative; display: inline-flex; align-items: center; gap: .6rem; min-height: 52px; padding: .75rem 1.6rem; border-radius: 999px;
+  font-weight: 600; text-decoration: none; transition: transform .2s var(--ease), border-color .25s; }
+.btn:active { transform: scale(.97); }
+.btn-solid { background: var(--ink); color: #000; }
+.btn-solid::before { content: ""; position: absolute; inset: -3px; border-radius: inherit; z-index: -1; filter: blur(7px);
+  background: conic-gradient(from var(--ang), transparent 0 55%, var(--a1) 72%, var(--a2) 88%, transparent); animation: spin 3.2s linear infinite; }
+.btn-solid:hover::before { filter: blur(12px); inset: -6px; }
+.btn-line { border: 1px solid var(--line); background: rgb(0 0 0 / .35); backdrop-filter: blur(8px); }
 .btn-line:hover { border-color: var(--ink); }
-.btn:active { transform: translateY(1px) scale(.98); }
+@keyframes spin { to { --ang: 360deg; } }
+.lnk { display: inline-flex; align-items: center; gap: .5rem; width: fit-content; text-decoration: none; font-weight: 600; border-block-end: 1px solid var(--line); padding-block-end: .3rem; transition: border-color .25s, color .25s; }
+.lnk:hover { border-color: var(--a2); color: var(--a2); }
 
 /* Nav */
-.nav { position: sticky; top: 0; z-index: 20; background: rgb(11 11 10 / .92); border-block-end: 1px solid var(--line); }
-.nav .wrap { display: flex; align-items: center; gap: 2rem; min-height: 72px; }
-.brand { font-weight: 800; font-size: 1.05rem; text-decoration: none; white-space: nowrap; }
-.nav ul { display: flex; gap: clamp(1rem, 1.9vw, 1.75rem); white-space: nowrap; list-style: none; margin: 0; padding: 0; margin-inline-start: auto; }
-.nav ul a { display: inline-block; padding-block: .6rem; text-decoration: none; color: var(--mute); transition: color .2s; }
-.nav ul a:hover { color: var(--ink); }
-.nav .btn { min-height: 44px; padding: .5rem 1.1rem; }
+.nav { position: fixed; inset-inline: 0; top: 0; z-index: 20; background: rgb(0 0 0 / .62); backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4); border-block-end: 1px solid rgb(245 245 242 / .08); }
+.nav .wrap { display: flex; align-items: center; gap: 2rem; min-height: 68px; }
+.brand { font-weight: 800; text-decoration: none; white-space: nowrap; }
+.nav ul { display: flex; gap: clamp(.9rem, 1.7vw, 1.6rem); white-space: nowrap; list-style: none; margin: 0; padding: 0; margin-inline-start: auto; }
+.nav ul a { display: inline-block; padding-block: .6rem; text-decoration: none; color: var(--soft); font-size: .98rem; transition: color .2s; }
+.nav ul a:hover { color: #fff; }
+.nav .btn { min-height: 44px; padding: .45rem 1.2rem; }
 
-/* Hero */
-.hero { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2rem var(--gut); align-items: start; padding-block: clamp(2.5rem, 6vh, 5rem) clamp(1rem, 3vh, 2rem); }
-.hero h1 { grid-column: 1 / -1; }
-.hero-copy { grid-column: 1 / span 5; align-self: start; display: grid; gap: 1.75rem; }
-.hero h1 { font-size: clamp(2.2rem, 6vw, 6rem); line-height: 1.35; }
-@media (min-width: 768px) { .hero h1 span { white-space: nowrap; } }
-.hero h1 span { display: block; }
+/* Hero: the headline up top, the ring owns the stage */
+.hero { position: relative; height: 100svh; min-height: 34rem; overflow: clip; display: grid; align-items: start; padding-block: 7rem 2.5rem; }
+#fx { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 1.2s; }
+#fx.in { opacity: 1; }
+.hero-in { display: grid; gap: 1.6rem; position: relative; z-index: 1; padding-block-start: clamp(1rem, 9vh, 6rem); }
+.hero h1 { font-size: clamp(2rem, 4.6vw, 4.6rem); text-shadow: 0 2px 40px rgb(0 0 0 / .7); }
+.hero h1 .ln { display: block; overflow: clip; padding-block: .14em; margin-block: -.14em; }
+.hero h1 .ln > span { display: block; }
 .hero h1 .dim { color: var(--mute); }
-.hero p { font-size: 1.15rem; color: var(--soft); max-width: 34ch; }
-.ctas { display: flex; flex-wrap: wrap; gap: .75rem; }
-.reel { grid-column: 6 / -1; margin: 0; }
-.reel video { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: var(--r); background: var(--raise); }
-.reel figcaption { display: flex; justify-content: space-between; gap: 1rem; margin-block-start: .9rem; font-size: .95rem; color: var(--mute); min-height: 1.8em; }
-.reel figcaption b { color: var(--ink); font-weight: 500; }
+.sub { font-size: 1.15rem; color: var(--soft); max-width: 36ch; text-shadow: 0 1px 20px #000; }
+.ctas { display: flex; flex-wrap: wrap; gap: .9rem; }
+.cap { display: grid; justify-items: center; gap: .15rem; position: absolute; inset-inline: 0; bottom: clamp(.75rem, 2.5vh, 2rem); z-index: 2; text-align: center; opacity: 0; visibility: hidden; padding-block: 1rem .5rem;
+  background: radial-gradient(ellipse 34rem 60% at 50% 55%, rgb(0 0 0 / .82), transparent 72%); }
+.cap b { font-weight: 900; font-size: clamp(1.4rem, 2.4vw, 2.1rem); line-height: 1.4; }
+.cap span { color: var(--soft); }
+.cap small { color: var(--mute); font-size: .85rem; }
+.cap-go { display: flex; gap: 1.75rem; margin-block-start: .35rem; }
+.cap-go .quiet { color: var(--mute); font-weight: 400; }
+.hint { position: absolute; inset-inline: 0; bottom: 1.5rem; text-align: center; color: var(--mute); font-size: .9rem; z-index: 2; }
+.no-fx .hint, .no-fx .cap, .no-fx #fx { display: none; }
+.no-fx .hero { height: auto; min-height: 70svh; align-items: center; }
 
-/* Section rhythm */
-section { padding-block: clamp(5rem, 12vw, 10rem) 0; }
-.head { display: grid; gap: 1rem; margin-block-end: clamp(2.5rem, 5vw, 4rem); max-width: 52rem; }
-.head h2 { font-size: clamp(2.4rem, 5.6vw, 5.5rem); }
-.head p { text-wrap: pretty; font-size: 1.15rem; color: var(--soft); max-width: 46ch; }
+/* Marquee */
+.mq { direction: ltr; overflow: clip; padding-block: clamp(3rem, 8vw, 6rem) 0; display: grid; gap: .25rem; }
+.mq-in { display: flex; width: max-content; will-change: transform; }
+.mq-in span { font-weight: 900; font-size: clamp(2.6rem, 8vw, 7.5rem); line-height: 1.5; white-space: nowrap; padding-inline: .45em; color: rgb(245 245 242 / .16); }
+.mq-in span:nth-child(3n+1) { color: var(--ink); }
+.mq-in i { align-self: center; width: .9rem; height: .9rem; border-radius: 50%; background: var(--a1); box-shadow: 0 0 24px 6px var(--a1); flex: none; }
+.mq-in:nth-child(2) i { background: var(--a2); box-shadow: 0 0 24px 6px var(--a2); }
 
-/* Tamwil */
-.tamwil { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3rem var(--gut); align-items: start; }
-.tamwil .head { grid-column: 1 / -1; margin: 0; }
-.tamwil .head h2 { margin-block-end: .25em; } /* the ق of قسطي drops below the line box */
-.stage { grid-column: 5 / -1; grid-row: 2 / span 2; position: relative; padding-block-end: 6rem; }
-.stage .desk { border-radius: var(--r); box-shadow: 0 30px 80px -20px rgb(0 0 0 / .8); }
-.stage .phone { position: absolute; inset-inline-end: -1rem; bottom: 0; width: 22%; border-radius: var(--r); outline: 1px solid var(--line); box-shadow: 0 30px 60px -10px rgb(0 0 0 / .9); }
-.facts { grid-column: 1 / span 4; grid-row: 2; list-style: none; margin: 0; padding: 0; }
-.facts li { text-wrap: pretty; padding-block: 1.1rem; border-block-start: 1px solid var(--line); font-size: 1.05rem; }
+/* Work sections */
+main > section { padding-block: clamp(5rem, 11vw, 9.5rem) 0; }
+.sec-h { font-size: clamp(2.4rem, 5.4vw, 5.2rem); }
+.lead { color: var(--soft); font-size: 1.12rem; max-width: 40ch; text-wrap: pretty; }
+.tag { color: var(--a2); font-size: .95rem; font-weight: 500; }
+.work { display: grid; grid-template-columns: 5fr 7fr; gap: 3rem var(--gut); align-items: start; perspective: 1400px; }
+.work-txt { display: grid; gap: 1.2rem; }
+.facts { list-style: none; margin: .5rem 0 0; padding: 0; }
+.facts li { text-wrap: pretty; padding-block: 1rem; border-block-start: 1px solid var(--line); }
 .facts li:last-child { border-block-end: 1px solid var(--line); }
-.tamwil-foot { grid-column: 1 / span 4; grid-row: 3; display: grid; gap: 1.25rem; align-content: start; }
+.work-foot { display: grid; gap: 1rem; justify-items: start; margin-block-start: .5rem; }
 .note { font-size: .9rem; color: var(--mute); }
+.stage { position: relative; }
+.stage::before { content: ""; position: absolute; inset: 8% -6% -14%; z-index: -1; filter: blur(70px); opacity: .5;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--a1) 75%, transparent), transparent); }
+.stage.has-phone { padding-block-end: 4.5rem; }
+.shot { display: block; transform-style: preserve-3d; border-radius: var(--r); }
+.shot-in { position: relative; overflow: hidden; border-radius: var(--r); aspect-ratio: 16 / 10; background: var(--raise); outline: 1px solid var(--line); outline-offset: -1px; }
+.shot-in img { width: 100%; height: 116%; object-fit: cover; object-position: top; }
+.shot-in.full { aspect-ratio: auto; }
+.shot-in.full img { height: auto; }
+.glare { position: absolute; inset: 0; mix-blend-mode: screen; opacity: 0; transition: opacity .35s;
+  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 50%), rgb(255 255 255 / .34), transparent 46%); }
+.shot:hover .glare { opacity: 1; }
+.stage .phone { position: absolute; inset-inline-end: -1rem; bottom: 0; width: 22%; border-radius: 10px; outline: 1px solid var(--line); box-shadow: 0 30px 70px -10px #000, 0 0 60px -10px var(--a1); }
 
-/* WhatsApp workflow */
-.canvas { border-radius: var(--r); overflow: hidden; }
-.canvas img { width: 100%; }
-.swipe { display: none; }
-.track { list-style: none; margin: 0; padding: 2.5rem 0 0; display: grid; grid-template-columns: repeat(5, 1fr); position: relative; }
-.track::before { content: ""; position: absolute; inset-inline: 0; top: 2.5rem; border-block-start: 1px solid var(--line); }
-.track li { position: relative; padding-block-start: 1.5rem; padding-inline-end: 1rem; }
-.track li::before { content: ""; position: absolute; top: -5px; inset-inline-start: 0; width: 9px; height: 9px; background: var(--ink); border-radius: 50%; }
+/* WhatsApp reminders: a light travels the schedule */
+.track { list-style: none; margin: clamp(3rem, 6vw, 5rem) 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); position: relative; --p: 0; }
+.track::before { content: ""; position: absolute; inset-inline: 0; top: 0; border-block-start: 1px solid var(--line); }
+.track::after { content: ""; position: absolute; top: -1px; inset-inline-start: 0; width: calc(var(--p) * 100%); height: 2px; background: linear-gradient(to left, var(--a1), var(--a2)); box-shadow: 0 0 18px 2px var(--a1); }
+[dir="rtl"] .track::after { background: linear-gradient(to left, var(--a2), var(--a1)); }
+.track li { position: relative; padding-block-start: 1.5rem; padding-inline-end: 1rem; color: var(--mute); transition: color .5s; }
+.track li::before { content: ""; position: absolute; top: -5px; inset-inline-start: 0; width: 9px; height: 9px; border-radius: 50%; background: #444; z-index: 1; transition: background .4s, box-shadow .4s; }
+.track li.on { color: var(--ink); }
+.track li.on::before { background: #fff; box-shadow: 0 0 16px 5px var(--a2); }
 .track b { display: block; font-weight: 800; font-size: clamp(1.1rem, 1.8vw, 1.5rem); line-height: 1.4; }
-.track span { color: var(--mute); font-size: .95rem; }
-.wa-split { display: grid; grid-template-columns: 5fr 7fr; gap: var(--gut); margin-block-start: clamp(3rem, 6vw, 5rem); align-items: start; }
+.track span { font-size: .95rem; }
+.wa-split { display: grid; grid-template-columns: 5fr 7fr; gap: var(--gut); margin-block: clamp(3rem, 6vw, 5rem) 2.5rem; align-items: start; }
 .msg { margin: 0; padding: 1.5rem 1.75rem; background: var(--raise); border-radius: var(--r); border: 1px solid var(--line); }
 .msg p { font-size: 1.1rem; line-height: 1.9; }
 .msg footer { margin-block-start: 1rem; font-size: .85rem; color: var(--mute); }
@@ -124,70 +145,56 @@ section { padding-block: clamp(5rem, 12vw, 10rem) 0; }
 .rules li { font-size: clamp(1.25rem, 2.2vw, 1.9rem); font-weight: 700; line-height: 1.5; }
 .rules li span { display: block; font-size: 1rem; font-weight: 300; color: var(--mute); }
 
-/* Concepts */
-.grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: clamp(2.5rem, 4vw, 3.5rem) clamp(1rem, 2vw, 1.75rem); }
-.tile { grid-column: span 4; text-decoration: none; display: grid; gap: 1rem; }
-.tile.w7 { grid-column: span 7; } .tile.w5 { grid-column: span 5; } .tile.w6 { grid-column: span 6; }
-.frame { height: var(--tile-h); overflow: hidden; border-radius: var(--r); background: var(--raise); outline: 1px solid var(--line); outline-offset: -1px; }
-.frame img { width: 100%; transform: translateY(0); transition: transform 1s var(--ease); }
-.tile:hover .frame img, .tile:focus-visible .frame img, .tile.play .frame img { transform: translateY(calc(-100% + var(--tile-h))); transition: transform 7s cubic-bezier(.45, 0, .55, 1); }
-.tile:focus-visible { outline: none; }
-.tile:focus-visible .frame { outline: 2px solid var(--ink); outline-offset: 3px; }
-.cap { display: flex; justify-content: space-between; align-items: start; gap: 1rem; }
-.cap h3 { font-weight: 800; font-size: 1.3rem; line-height: 1.5; }
-.cap p { color: var(--mute); font-size: .95rem; }
-.cap .go { flex: none; display: inline-flex; align-items: center; gap: .4rem; font-size: .9rem; color: var(--mute); padding-block-start: .3rem; transition: color .2s; }
-.tile:hover .go { color: var(--ink); }
+/* Concepts: sideways strip */
+.concepts { overflow: clip; }
+.cx-head { display: grid; gap: .8rem; margin-block-end: 2.5rem; max-width: 46rem; }
+.cx-scroll { overflow-x: auto; scrollbar-width: none; scroll-snap-type: x proximity; }
+.pinned .cx-scroll { overflow: visible; scroll-snap-type: none; }
+.cx-track { display: flex; gap: clamp(1rem, 2vw, 1.75rem); width: max-content; padding-inline: var(--gut); will-change: transform; }
+.cx { width: clamp(280px, 38vw, 560px); text-decoration: none; display: grid; gap: .8rem; flex: none; scroll-snap-align: center; }
+.cx img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: var(--r); outline: 1px solid var(--line); outline-offset: -1px; transition: transform .6s var(--ease), box-shadow .6s; }
+.cx:hover img { transform: translateY(-8px) scale(1.02); box-shadow: 0 30px 90px -30px var(--a1); }
+.cx b { font-weight: 800; font-size: 1.25rem; line-height: 1.5; }
+.cx span { color: var(--mute); font-size: .95rem; }
 
 /* Way of working */
-.way { list-style: none; margin: 0; padding: 0; }
+.way { list-style: none; margin: clamp(2rem, 4vw, 3.5rem) 0 0; padding: 0; }
 .way li { display: grid; grid-template-columns: 4fr 8fr; gap: var(--gut); padding-block: 2rem; border-block-start: 1px solid var(--line); }
 .way b { font-weight: 800; font-size: clamp(1.4rem, 2.6vw, 2.2rem); line-height: 1.4; }
 .way span { color: var(--soft); font-size: 1.1rem; max-width: 50ch; padding-block-start: .4rem; }
 
 /* Contact */
-.contact { padding-block: clamp(6rem, 14vw, 12rem) clamp(3rem, 6vw, 5rem); }
-.contact h2 { font-size: clamp(4rem, 13vw, 12rem); line-height: 1.3; }
-.contact p { font-size: 1.2rem; color: var(--soft); margin-block: 3rem; max-width: 40ch; }
+.contact { padding-block: clamp(6rem, 14vw, 12rem) clamp(3rem, 6vw, 5rem) !important; }
+.contact h2 { font-size: clamp(4rem, 14vw, 13rem); }
+.contact p { font-size: 1.2rem; color: var(--soft); margin-block: 2rem 2.5rem; max-width: 40ch; }
 .lines { display: grid; gap: 1rem; }
-.lines a { display: flex; align-items: center; gap: 1rem; width: fit-content; text-decoration: none; font-size: clamp(1.4rem, 3.4vw, 2.8rem); font-weight: 500; border-block-end: 1px solid var(--line); padding-block-end: .4rem; transition: border-color .25s; }
-.lines a:hover { border-color: var(--ink); }
+.lines a { display: flex; align-items: center; gap: 1rem; width: fit-content; text-decoration: none; font-size: clamp(1.3rem, 3.2vw, 2.6rem); font-weight: 500; border-block-end: 1px solid var(--line); padding-block-end: .4rem; transition: border-color .25s, color .25s; }
+.lines a:hover { border-color: var(--a2); color: var(--a2); }
 .lines .icon { width: .9em; height: .9em; color: var(--mute); }
-.foot { border-block-start: 1px solid var(--line); padding-block: 2rem; color: var(--mute); font-size: .9rem; }
+.foot { border-block-start: 1px solid var(--line); padding-block: 1.6rem; color: var(--mute); font-size: .9rem; }
 
-@media (max-width: 1024px) {
-  .hero-copy, .reel { grid-column: 1 / -1; }
-  .nav ul { display: none; }
-  .nav .wrap { justify-content: space-between; }
-  .hero p { max-width: 44ch; }
-  .stage, .facts, .tamwil-foot { grid-column: 1 / -1; grid-row: auto; }
-  .stage { padding-block-end: 4rem; }
-  .tile, .tile.w7, .tile.w5, .tile.w6 { grid-column: span 6; }
+@media (min-width: 901px) { .stage { position: sticky; top: 6.5rem; } }
+@media (max-width: 1180px) { .nav ul { display: none; } .nav .wrap { justify-content: space-between; } }
+@media (max-width: 900px) {
+  .work { grid-template-columns: 1fr; gap: 2rem; }
+  .work .stage { order: -1; }
+  .wa-split, .way li { grid-template-columns: 1fr; }
+  .way li { gap: .5rem; }
 }
 @media (max-width: 767px) {
   body { font-size: 1rem; }
-  .hero h1 { font-size: clamp(1.7rem, 7.4vw, 2.6rem); }
-  .reel figcaption { flex-direction: column; gap: 0; }
-  .stage .phone { width: 30%; inset-inline-end: 0; }
   .ctas .btn { flex: 1 1 100%; justify-content: center; }
-  .canvas { overflow-x: auto; scrollbar-width: thin; }
-  .canvas img { width: 1000px; max-width: none; }
-  .swipe { display: block; margin-block-start: .6rem; font-size: .9rem; color: var(--mute); }
-  .stage { padding-block-end: 3rem; }
-  .lines a { font-size: 1.15rem; }
-  .track { grid-template-columns: 1fr; padding-block-start: 0; gap: 1.25rem; }
+  .stage .phone { width: 30%; inset-inline-end: 0; }
+  .stage.has-phone { padding-block-end: 3rem; }
+  .lines a { font-size: 1.1rem; }
+  .cx { width: 78vw; }
+  .track { grid-template-columns: 1fr; gap: 1.25rem; }
   .track::before { inset-inline: auto; inset-inline-start: 4px; top: .5rem; bottom: .5rem; border-block-start: 0; border-inline-start: 1px solid var(--line); }
+  .track::after { display: none; }
   .track li { padding-block-start: 0; padding-inline-start: 2rem; }
   .track li::before { top: .55rem; }
-  .wa-split, .way li { grid-template-columns: 1fr; }
-  .way li { gap: .5rem; }
-  .tile, .tile.w7, .tile.w5, .tile.w6 { grid-column: 1 / -1; }
-  :root { --tile-h: 72vw; }
 }
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  .frame img, .tile:hover .frame img, .tile:focus-visible .frame img, .tile.play .frame img { transform: none; transition: none; }
-}
+@media (prefers-reduced-motion: reduce) { .btn-solid::before { animation: none; } #fx { transition: none; } }
 </style>
 </head>
 <body>
@@ -197,7 +204,7 @@ section { padding-block: clamp(5rem, 12vw, 10rem) 0; }
   <symbol id="i-mail" viewBox="0 0 256 256"><path fill="currentColor" d="M224,48H32a8,8,0,0,0-8,8V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A8,8,0,0,0,224,48ZM203.43,64,128,133.15,52.57,64ZM216,192H40V74.19l82.59,75.71a8,8,0,0,0,10.82,0L216,74.19V192Z"/></symbol>
   <symbol id="i-down" viewBox="0 0 256 256"><path fill="currentColor" d="M205.66,149.66l-72,72a8,8,0,0,1-11.32,0l-72-72a8,8,0,0,1,11.32-11.32L120,196.69V40a8,8,0,0,1,16,0V196.69l58.34-58.35a8,8,0,0,1,11.32,11.32Z"/></symbol>
 </svg>
-<a class="skip" href="#main">تخطَّ إلى المحتوى</a>
+<a class="skip" href="#tamwil">تخطَّ إلى الأعمال</a>
 
 <header class="nav">
   <div class="wrap">
@@ -206,6 +213,7 @@ section { padding-block: clamp(5rem, 12vw, 10rem) 0; }
       <li><a href="#tamwil">قسطي</a></li>
       <li><a href="#aurum">أوروم فالي</a></li>
       <li><a href="#whatsapp">أتمتة واتساب</a></li>
+      <li><a href="#bot">بوت الحجز</a></li>
       <li><a href="#winboost">تسريع ويندوز</a></li>
       <li><a href="#cards">بطاقات المحفظة</a></li>
       <li><a href="#concepts">التصاميم</a></li>
@@ -215,79 +223,89 @@ section { padding-block: clamp(5rem, 12vw, 10rem) 0; }
 </header>
 
 <main id="main">
-  <div class="wrap hero" id="top">
-    <h1><span>مواقع تجيب الزباين،</span> <span class="dim">وأنظمة تشتغل عنك.</span></h1>
-    <div class="hero-copy">
-      <p>أنا فيصل، مطوّر من الرياض. أصمم مواقع للأنشطة، وأبني أنظمة تذكّر عملاءك بمدفوعاتهم وتحصّلها تلقائيًا.</p>
+  <div class="hero" id="top">
+    <canvas id="fx" aria-hidden="true"></canvas>
+    <div class="wrap hero-in">
+      <h1><span class="ln"><span>مواقع تجيب الزباين،</span></span> <span class="ln dim"><span>وأنظمة تشتغل عنك.</span></span></h1>
+      <p class="sub">أنا فيصل، مطوّر من الرياض. أصمم مواقع للأنشطة، وأبني أنظمة تذكّر عملاءك بمدفوعاتهم وتحصّلها تلقائيًا.</p>
       <div class="ctas">
         <a class="btn btn-solid" href="https://wa.me/966549978811"><svg class="icon" aria-hidden="true"><use href="#i-wa"/></svg>راسلني واتساب</a>
         <a class="btn btn-line" href="#tamwil">شوف الأعمال<svg class="icon" aria-hidden="true"><use href="#i-down"/></svg></a>
       </div>
     </div>
-    <figure class="reel">
-      <video id="reel" autoplay muted loop playsinline preload="auto" poster="assets/reel-poster.webp" aria-label="عرض سريع لمواقع وأنظمة من أعمالي">
-        <source src="assets/reel-800.mp4" type="video/mp4" media="(max-width: 800px)">
-        <source src="assets/reel-1280.mp4" type="video/mp4">
-      </video>
-      <figcaption aria-live="off"><b id="reel-name">قصر الرياض للاحتفالات</b><span id="reel-kind">تصميم مقترح: قاعة أفراح</span></figcaption>
-    </figure>
+    <div class="cap" id="cap">
+      <b id="cap-name"></b><span id="cap-kind"></span><small class="mono" id="cap-n" dir="ltr"></small>
+      <div class="cap-go">
+        <a class="lnk" id="cap-go"><span id="cap-label"></span><svg class="icon" aria-hidden="true"><use href="#i-out"/></svg></a>
+        <a class="lnk quiet" href="#tamwil">تخطَّ المعرض</a>
+      </div>
+    </div>
+    <p class="hint">مرّر لتحت وشوف الأعمال</p>
   </div>
 
+  <div class="mq" aria-hidden="true"><div class="mq-in"></div><div class="mq-in"></div></div>
+
   <section id="tamwil" aria-labelledby="tamwil-h">
-    <div class="wrap tamwil">
-      <div class="head">
-        <h2 id="tamwil-h">قسطي</h2>
-        <p>نظام سعودي لإدارة البيع بالتقسيط طوّرته، ويعمل فعليًا. المعرض يسجّل العقد، والنظام يتابع الأقساط ويذكّر ويحصّل.</p>
+    <div class="wrap work">
+      <div class="work-txt">
+        <span class="tag">نظام يعمل فعليًا</span>
+        <h2 class="sec-h" id="tamwil-h">قسطي</h2>
+        <p class="lead">نظام سعودي لإدارة البيع بالتقسيط طوّرته، ويعمل فعليًا. المعرض يسجّل العقد، والنظام يتابع الأقساط ويذكّر ويحصّل.</p>
+        <ul class="facts">
+          <li>يذكّر العملاء بأقساطهم عبر واتساب، من رقم المعرض نفسه.</li>
+          <li>دفع إلكتروني عبر ميسّر و<bdi>Tap</bdi>، وتتحدث حالة القسط تلقائيًا.</li>
+          <li>بوابة للعميل يشوف فيها أقساطه ويسدّد المتأخر.</li>
+          <li>لوحة تحكم بصلاحيات للمالك والموظفين.</li>
+          <li>استيراد البيانات القديمة من <bdi>Excel</bdi>، ونسخة أندرويد.</li>
+        </ul>
+        <div class="work-foot">
+          <a class="btn btn-line" href="https://qisti.app" target="_blank" rel="noopener">زُر الموقع<svg class="icon" aria-hidden="true"><use href="#i-out"/></svg></a>
+          <p class="note">اللقطات ببيانات تجريبية، لأن النظام يحمل بيانات عملاء حقيقية.</p>
+        </div>
       </div>
-      <div class="stage">
-        <img class="desk" src="assets/work/tamwil-dashboard.webp" width="1440" height="900" loading="lazy" alt="لوحة تحكم المعرض في قسطي: الأقساط المتأخرة وتحصيل الشهر">
+      <div class="stage has-phone">
+        <div class="shot"><div class="shot-in"><img src="assets/work/tamwil-dashboard.webp" width="1440" height="900" loading="lazy" alt="لوحة تحكم المعرض في قسطي: الأقساط المتأخرة وتحصيل الشهر"><i class="glare"></i></div></div>
         <img class="phone" src="assets/work/tamwil-portal.webp" width="585" height="1266" loading="lazy" alt="بوابة العميل على الجوال: القسط المتأخر وزر السداد">
-      </div>
-      <ul class="facts">
-        <li>يذكّر العملاء بأقساطهم عبر واتساب، من رقم المعرض نفسه.</li>
-        <li>دفع إلكتروني عبر ميسّر و<bdi>Tap</bdi>، وتتحدث حالة القسط تلقائيًا.</li>
-        <li>بوابة للعميل يشوف فيها أقساطه ويسدّد المتأخر.</li>
-        <li>لوحة تحكم بصلاحيات للمالك والموظفين.</li>
-        <li>استيراد البيانات القديمة من <bdi>Excel</bdi>، ونسخة أندرويد.</li>
-      </ul>
-      <div class="tamwil-foot">
-        <a class="btn btn-line" href="https://qisti.app" target="_blank" rel="noopener">زُر الموقع<svg class="icon" aria-hidden="true"><use href="#i-out"/></svg></a>
-        <p class="note">اللقطات ببيانات تجريبية، لأن النظام يحمل بيانات عملاء حقيقية.</p>
       </div>
     </div>
   </section>
 
   <section id="aurum" aria-labelledby="aurum-h">
-    <div class="wrap tamwil">
-      <div class="head">
-        <h2 id="aurum-h">أوروم فالي</h2>
-        <p>موقع تعريفي صممته وبنيته لشركة سعودية تجمع زيوت الطعام المستعملة وتورّدها للمصانع. عمل مدفوع لعميل، وشغّال اليوم على دومين الشركة.</p>
+    <div class="wrap work">
+      <div class="work-txt">
+        <span class="tag">عمل مدفوع لعميل</span>
+        <h2 class="sec-h" id="aurum-h">أوروم فالي</h2>
+        <p class="lead">موقع تعريفي صممته وبنيته لشركة سعودية تجمع زيوت الطعام المستعملة وتورّدها للمصانع. شغّال اليوم على دومين الشركة.</p>
+        <ul class="facts">
+          <li>نسخة عربية ونسخة إنجليزية، وكل وحدة باتجاهها الصحيح.</li>
+          <li>صفحة رئيسية وصفحة تواصل، بألوان الشركة وشعارها.</li>
+          <li>فيديو في الواجهة، ويشتغل على الجوال والكمبيوتر.</li>
+          <li>ربطت الدومين، وجهّزت بريد رسمي باسم الشركة.</li>
+        </ul>
+        <div class="work-foot">
+          <a class="btn btn-line" href="https://aurumvalley.sa/ar/" target="_blank" rel="noopener">زُر الموقع<svg class="icon" aria-hidden="true"><use href="#i-out"/></svg></a>
+        </div>
       </div>
-      <div class="stage">
-        <img class="desk" src="assets/work/aurum-desktop.webp" width="1440" height="900" loading="lazy" alt="الصفحة الرئيسية لموقع أوروم فالي على الكمبيوتر: اسم الشركة فوق لقطة ميناء وقت الغروب">
+      <div class="stage has-phone">
+        <div class="shot"><div class="shot-in"><img src="assets/work/aurum-desktop.webp" width="1440" height="900" loading="lazy" alt="الصفحة الرئيسية لموقع أوروم فالي على الكمبيوتر: اسم الشركة فوق لقطة ميناء وقت الغروب"><i class="glare"></i></div></div>
         <img class="phone" src="assets/work/aurum-phone.webp" width="585" height="1266" loading="lazy" alt="موقع أوروم فالي على الجوال">
-      </div>
-      <ul class="facts">
-        <li>نسخة عربية ونسخة إنجليزية، وكل وحدة باتجاهها الصحيح.</li>
-        <li>صفحة رئيسية وصفحة تواصل، بألوان الشركة وشعارها.</li>
-        <li>فيديو في الواجهة، ويشتغل على الجوال والكمبيوتر.</li>
-        <li>ربطت الدومين، وجهّزت بريد رسمي باسم الشركة.</li>
-      </ul>
-      <div class="tamwil-foot">
-        <a class="btn btn-line" href="https://aurumvalley.sa/ar/" target="_blank" rel="noopener">زُر الموقع<svg class="icon" aria-hidden="true"><use href="#i-out"/></svg></a>
       </div>
     </div>
   </section>
 
   <section id="whatsapp" aria-labelledby="wa-h">
     <div class="wrap">
-      <div class="head">
-        <h2 id="wa-h">تذكير المدفوعات بواتساب</h2>
-        <p>كل يوم الساعة 9 الصبح يقرأ جدول المدفوعات، ويرسل لكل عميل الرسالة المناسبة لموعده. الأدوات: <bdi>n8n</bdi>، و<bdi>Google Sheets</bdi>، وواتساب للأعمال.</p>
+      <div class="work">
+        <div class="work-txt">
+          <span class="tag">أتمتة</span>
+          <h2 class="sec-h" id="wa-h">تذكير المدفوعات بواتساب</h2>
+          <p class="lead">كل يوم الساعة 9 الصبح يقرأ جدول المدفوعات، ويرسل لكل عميل الرسالة المناسبة لموعده. الأدوات: <bdi>n8n</bdi>، و<bdi>Google Sheets</bdi>، وواتساب للأعمال.</p>
+        </div>
+        <div class="stage">
+          <div class="shot"><div class="shot-in full" dir="ltr"><img src="assets/work/workflow.webp" width="1600" height="697" loading="lazy" alt="مخطط سير العمل في n8n: قراءة المدفوعات، التصنيف، إرسال تذكير واتساب، ثم تسجيل الإرسال في الجدول"><i class="glare"></i></div></div>
+        </div>
       </div>
-      <div class="canvas" dir="ltr" tabindex="0" role="region" aria-label="مخطط سير العمل، اسحب لرؤيته كاملًا"><picture><source media="(max-width: 767px)" srcset="assets/work/workflow-m.webp" width="1200" height="367"><img src="assets/work/workflow.webp" width="1600" height="697" loading="lazy" alt="مخطط سير العمل في n8n: قراءة المدفوعات، التصنيف، إرسال تذكير واتساب، ثم تسجيل الإرسال في الجدول"></picture></div>
-      <p class="swipe" aria-hidden="true">اسحب المخطط لتشوفه كامل</p>
-      <ol class="track" aria-label="مواعيد التذكير">
+      <ol class="track" id="track" aria-label="مواعيد التذكير">
         <li><b>قبل الموعد بـ 3 أيام</b><span>تذكير بالدفعة القادمة</span></li>
         <li><b>يوم الاستحقاق</b><span>الدفعة مستحقة اليوم</span></li>
         <li><b>تأخر يوم</b><span>أول تنبيه بالتأخر</span></li>
@@ -305,70 +323,93 @@ section { padding-block: clamp(5rem, 12vw, 10rem) 0; }
           <li>كلمة وحدة توقفه.<span>تكتب «مدفوع» في الجدول، وتوقف التذكيرات لهذا العميل.</span></li>
         </ul>
       </div>
-      <div class="ctas" style="margin-top:2rem">
-        <a class="btn btn-solid" href="https://faisalmt3.lemonsqueezy.com/checkout/buy/3ddb43a2-a1e6-45e2-98ad-7939e16a746f" rel="noopener">حمّل سير العمل جاهز لـ <bdi>n8n</bdi><svg class="icon" aria-hidden="true"><use href="#i-out"/></svg></a>
+      <a class="btn btn-solid" href="https://faisalmt3.lemonsqueezy.com/checkout/buy/3ddb43a2-a1e6-45e2-98ad-7939e16a746f" rel="noopener">حمّل سير العمل جاهز لـ <bdi>n8n</bdi><svg class="icon" aria-hidden="true"><use href="#i-out"/></svg></a>
+    </div>
+  </section>
+
+  <section id="bot" aria-labelledby="bot-h">
+    <div class="wrap work">
+      <div class="work-txt">
+        <span class="tag">جرّبه بنفسك</span>
+        <h2 class="sec-h" id="bot-h">بوت حجز المواعيد بواتساب</h2>
+        <p class="lead">العميل يكتب لرقم المحل على واتساب مثل ما يكتب لأي أحد، والبوت يرد بالأسعار ويحجز له الموعد. للعيادات والصالونات وأي نشاط يشتغل بالمواعيد.</p>
+        <ul class="facts">
+          <li>يجاوب عن الأسعار من جدول المحل نفسه، ويجمع أكثر من خدمة في رسالة وحدة.</li>
+          <li>يحجز الموعد: الخدمة واليوم والوقت والاسم، ويفهمها لو انكتبت كلها في جملة.</li>
+          <li>ما يعطي نفس الوقت لعميلين، وإذا الوقت محجوز يعرض أقرب وقت فاضي.</li>
+          <li>يعدّل الحجز ويلغيه، ويحوّل المحادثة للموظف إذا طلب العميل.</li>
+          <li>يرد بالعربي أو الإنجليزي حسب لغة العميل.</li>
+        </ul>
+        <div class="work-foot">
+          <a class="btn btn-line" href="https://booking-bot-demo.faisalfahadmt3.workers.dev/?play" target="_blank" rel="noopener">جرّب النسخة التجريبية<svg class="icon" aria-hidden="true"><use href="#i-out"/></svg></a>
+          <p class="note">النسخة التجريبية تشتغل في المتصفح بدون رقم جوال. المحلات والأسعار فيها أمثلة.</p>
+        </div>
+      </div>
+      <div class="stage has-phone">
+        <a class="shot" href="https://booking-bot-demo.faisalfahadmt3.workers.dev/?play" target="_blank" rel="noopener" aria-label="افتح النسخة التجريبية من بوت الحجز"><div class="shot-in"><img src="assets/work/booking-bot.webp" width="1440" height="960" loading="lazy" alt="النسخة التجريبية من بوت الحجز: محادثة صالون فيها تأكيد حجز، وبجانبها قائمة الأسعار وجدول المواعيد"><i class="glare"></i></div></a>
+        <img class="phone" src="assets/work/booking-bot-phone.webp" width="585" height="1266" loading="lazy" alt="محادثة الحجز على الجوال">
       </div>
     </div>
   </section>
 
   <section id="winboost" aria-labelledby="wb-h">
-    <div class="wrap tamwil">
-      <div class="head">
-        <h2 id="wb-h"><bdi>WinBoost</bdi></h2>
-        <p>أداة طوّرتها لتسريع ويندوز 10 و11. العميل يلصق سطر واحد، والأداة تفحص الجهاز وتطبّق بس التعديلات الآمنة اللي تناسبه، وبعد إعادة التشغيل يطلع له تقرير قبل وبعد.</p>
+    <div class="wrap work">
+      <div class="work-txt">
+        <span class="tag">أداة طوّرتها</span>
+        <h2 class="sec-h" id="wb-h"><bdi>WinBoost</bdi></h2>
+        <p class="lead">أداة لتسريع ويندوز 10 و11. العميل يلصق سطر واحد، والأداة تفحص الجهاز وتطبّق بس التعديلات الآمنة اللي تناسبه، وبعد إعادة التشغيل يطلع له تقرير قبل وبعد.</p>
+        <ul class="facts">
+          <li>يحذف التطبيقات الدعائية غير المستخدمة، ويخفف برامج بدء التشغيل.</li>
+          <li>يختار التعديلات حسب الجهاز: الذاكرة، نوع القرص، ولابتوب أو مكتبي.</li>
+          <li>يكتشف أجهزة الألعاب تلقائيًا ويضيف لها وضع الألعاب وإعدادات الماوس.</li>
+          <li>نقطة استعادة قبل أي تغيير، وزر تراجع يرجّع كل شي.</li>
+          <li>ما يلمس مكافح الفيروسات ولا تحديثات ويندوز ولا ملفاتك، وبدون تحكم عن بعد.</li>
+        </ul>
+        <div class="work-foot">
+          <a class="btn btn-line" href="https://wa.me/966549978811"><svg class="icon" aria-hidden="true"><use href="#i-wa"/></svg>اطلب تسريع جهازك</a>
+          <p class="note">التقرير في الصورة ببيانات تجريبية.</p>
+        </div>
       </div>
       <div class="stage">
-        <img class="desk" src="assets/work/winboost-report.webp" width="1600" height="1330" loading="lazy" alt="تقرير WinBoost بعد التسريع: برامج بدء التشغيل والتطبيقات غير الضرورية قبل وبعد، وأكثر البرامج استهلاكًا">
-      </div>
-      <ul class="facts">
-        <li>يحذف التطبيقات الدعائية غير المستخدمة، ويخفف برامج بدء التشغيل.</li>
-        <li>يختار التعديلات حسب الجهاز: الذاكرة، نوع القرص، ولابتوب أو مكتبي.</li>
-        <li>يكتشف أجهزة الألعاب تلقائيًا ويضيف لها وضع الألعاب وإعدادات الماوس.</li>
-        <li>نقطة استعادة قبل أي تغيير، وزر تراجع يرجّع كل شي.</li>
-        <li>ما يلمس مكافح الفيروسات ولا تحديثات ويندوز ولا ملفاتك، وبدون تحكم عن بعد.</li>
-      </ul>
-      <div class="tamwil-foot">
-        <a class="btn btn-line" href="https://wa.me/966549978811"><svg class="icon" aria-hidden="true"><use href="#i-wa"/></svg>اطلب تسريع جهازك</a>
-        <p class="note">التقرير في الصورة ببيانات تجريبية.</p>
+        <div class="shot"><div class="shot-in full"><img src="assets/work/winboost-report.webp" width="1600" height="1330" loading="lazy" alt="تقرير WinBoost بعد التسريع: برامج بدء التشغيل والتطبيقات غير الضرورية قبل وبعد، وأكثر البرامج استهلاكًا"><i class="glare"></i></div></div>
       </div>
     </div>
   </section>
 
   <section id="cards" aria-labelledby="cards-h">
-    <div class="wrap tamwil">
-      <div class="head">
-        <h2 id="cards-h">بطاقات أدعية للمحفظة</h2>
-        <p>22 بطاقة دعاء وذِكر سوّيتها لعميل يبيعها في متجره على سلة. المشتري يضغط الرابط، والبطاقة تنضاف لمحفظة الآيفون <bdi>(Apple Wallet)</bdi> وتبقى معه.</p>
+    <div class="wrap work">
+      <div class="work-txt">
+        <span class="tag">عمل مدفوع لعميل</span>
+        <h2 class="sec-h" id="cards-h">بطاقات أدعية للمحفظة</h2>
+        <p class="lead">22 بطاقة دعاء وذِكر سوّيتها لعميل يبيعها في متجره على سلة. المشتري يضغط الرابط، والبطاقة تنضاف لمحفظة الآيفون <bdi>(Apple Wallet)</bdi> وتبقى معه.</p>
+        <ul class="facts">
+          <li>كل دعاء في بطاقة مستقلة، بلونها وعنوانها.</li>
+          <li>تنضاف بضغطة من الرابط، بدون تحميل تطبيق.</li>
+          <li>رابط لكل بطاقة، يحطّه العميل في منتجه على سلة.</li>
+          <li>بدأ الطلب بـ 15 بطاقة، ورجع العميل وطلب 7 زيادة.</li>
+        </ul>
+        <div class="work-foot">
+          <a class="btn btn-line" href="https://wa.me/966549978811"><svg class="icon" aria-hidden="true"><use href="#i-wa"/></svg>اطلب بطاقات لمتجرك</a>
+          <p class="note">المعروض نماذج من البطاقات.</p>
+        </div>
       </div>
       <div class="stage">
-        <img class="desk" src="assets/work/wallet-cards.webp" width="1600" height="1516" loading="lazy" alt="ست بطاقات من المجموعة، كل بطاقة بلونها: أذكار المساء، أذكار ما بعد الصلاة، تحصين النفس والأهل، دعاء الاختبار، دعاء للوالدين، والصلاة الإبراهيمية">
-      </div>
-      <ul class="facts">
-        <li>كل دعاء في بطاقة مستقلة، بلونها وعنوانها.</li>
-        <li>تنضاف بضغطة من الرابط، بدون تحميل تطبيق.</li>
-        <li>رابط لكل بطاقة، يحطّه العميل في منتجه على سلة.</li>
-        <li>بدأ الطلب بـ 15 بطاقة، ورجع العميل وطلب 7 زيادة.</li>
-      </ul>
-      <div class="tamwil-foot">
-        <a class="btn btn-line" href="https://wa.me/966549978811"><svg class="icon" aria-hidden="true"><use href="#i-wa"/></svg>اطلب بطاقات لمتجرك</a>
-        <p class="note">عمل مدفوع لعميل. المعروض نماذج من البطاقات.</p>
+        <div class="shot"><div class="shot-in full"><img src="assets/work/wallet-cards.webp" width="1600" height="1516" loading="lazy" alt="ست بطاقات من المجموعة، كل بطاقة بلونها: أذكار المساء، أذكار ما بعد الصلاة، تحصين النفس والأهل، دعاء الاختبار، دعاء للوالدين، والصلاة الإبراهيمية"><i class="glare"></i></div></div>
       </div>
     </div>
   </section>
 
-  <section id="concepts" aria-labelledby="concepts-h">
-    <div class="wrap">
-      <div class="head">
-        <h2 id="concepts-h">تصاميم لأنشطة في الرياض</h2>
-        <p>صممت هذه المواقع من نفسي لأنشطة حقيقية، عشان أوريهم كيف ممكن يكون موقعهم. هي تصاميم مقترحة، مو أعمال مدفوعة. مرّر على أي تصميم وشوف الصفحة كاملة.</p>
-      </div>
-      <div class="grid" id="tiles"></div>
+  <section class="concepts" id="concepts" aria-labelledby="cx-h">
+    <div class="wrap cx-head">
+      <h2 class="sec-h" id="cx-h">تصاميم لأنشطة في الرياض</h2>
+      <p class="lead">صممت هذه المواقع من نفسي لأنشطة حقيقية، عشان أوريهم كيف ممكن يكون موقعهم. هي تصاميم مقترحة، مو أعمال مدفوعة.</p>
     </div>
+    <div class="cx-scroll" tabindex="0" role="region" aria-label="التصاميم المقترحة، اسحب لتشوفها كلها"><div class="cx-track" id="cx"></div></div>
   </section>
 
   <section aria-labelledby="way-h">
     <div class="wrap">
-      <div class="head"><h2 id="way-h">طريقة الشغل</h2></div>
+      <h2 class="sec-h" id="way-h">طريقة الشغل</h2>
       <ul class="way">
         <li><b>الاتفاق مكتوب.</b><span>السعر والمدة ونطاق العمل نحددها كتابيًا قبل البدء، وما في مفاجآت بعدين.</span></li>
         <li><b>أختبر قبل التسليم.</b><span>أجرّب كل شيء على الجوال والكمبيوتر بنفسي، وأسلّمك شيئًا شغّالًا.</span></li>
@@ -379,7 +420,7 @@ section { padding-block: clamp(5rem, 12vw, 10rem) 0; }
 
   <section aria-labelledby="fit-h">
     <div class="wrap">
-      <div class="head"><h2 id="fit-h">بترتاح معي إذا…</h2></div>
+      <h2 class="sec-h" id="fit-h">بترتاح معي إذا…</h2>
       <ul class="way">
         <li><b>تبي شيء شغّال.</b><span>يهمك أن الموقع أو النظام يجيب لك عملاء أو يوفّر وقتك، مو بس شكل حلو.</span></li>
         <li><b>تحب الوضوح.</b><span>تفضّل سعرًا ونطاقًا مكتوبين من البداية على الوعود الكبيرة.</span></li>
@@ -393,8 +434,8 @@ section { padding-block: clamp(5rem, 12vw, 10rem) 0; }
       <h2 id="contact-h">راسلني.</h2>
       <p>قل لي وش نشاطك ووش تحتاج، وأرد عليك بفكرة وسعر.</p>
       <div class="lines">
-        <a href="https://wa.me/966549978811"><svg class="icon" aria-hidden="true"><use href="#i-wa"/></svg><bdi class="d" dir="ltr">+966 54 997 8811</bdi></a>
-        <a href="mailto:faisalfahadmt3@gmail.com"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg><bdi class="d" dir="ltr">faisalfahadmt3@gmail.com</bdi></a>
+        <a href="https://wa.me/966549978811"><svg class="icon" aria-hidden="true"><use href="#i-wa"/></svg><bdi class="mono" dir="ltr">+966 54 997 8811</bdi></a>
+        <a href="mailto:faisalfahadmt3@gmail.com"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg><bdi class="mono" dir="ltr">faisalfahadmt3@gmail.com</bdi></a>
       </div>
     </div>
   </section>
@@ -402,50 +443,112 @@ section { padding-block: clamp(5rem, 12vw, 10rem) 0; }
 
 <footer class="foot"><div class="wrap">© 2026 فيصل فهد المطيري · الرياض</div></footer>
 
+<script src="assets/js/gsap.min.js"></script>
+<script src="assets/js/ScrollTrigger.min.js"></script>
 <script>
-// Keep in sync with REEL / SLOT in pitches/motion/src/PortfolioReel.tsx.
-const WORK = {
-  "riyadh-palace":  ["قصر الرياض للاحتفالات", "قاعة أفراح", "ليلة العمر تحت ثريات الكريستال", 3852, "w7"],
-  "hdb-halls":      ["قاعات هدب", "قاعات احتفالات ومؤتمرات", "أربع قاعات في الرياض. لوحة واحدة تختار منها.", 2106, "w5"],
-  "lana-clinics":   ["لنا كلينك", "عيادة أسنان وجلدية", "ابتسامتك وبشرتك في عيادة واحدة.", 2163, ""],
-  "glance":         ["مركز قلانس", "مركز تزيين نسائي", "ساعة لكِ وحدكِ، في قلب الفيحاء", 3353, ""],
-  "qasr-al-maha":   ["قصر المها للاحتفالات", "قاعة أفراح", "لا عمود يحجب العروس", 3711, ""],
-  "amy-rose":       ["إيمي روز للأثاث", "طاولات على المقاس", "طاولتك، على مقاس بيتك.", 3140, "w5"],
-  "panorama-hall":  ["قاعة بانوراما", "قاعة أفراح", "زفّة فوق الماء", 3622, "w7"],
-  "muhit-alshamal": ["محيط الشمال", "مركز صيانة سيارات", "موعد صيانة سيارتك، برسالة واحدة.", 2872, ""],
-  "nasiriyah-hall": ["قاعة الناصرية", "قاعة أفراح", "ليلة العمر، بين الأقواس والثريات", 3311, ""],
-  "care-freshness": ["مجمع عناية ونضارة", "مجمع طبي", "عناية ببشرتك وابتسامتك، تحت سقف واحد.", 2192, ""],
-};
-const REEL = ["riyadh-palace", "tamwil", "hdb-halls", "lana-clinics", "glance", "qasr-al-maha", "amy-rose", "panorama-hall", "muhit-alshamal", "nasiriyah-hall", "care-freshness"];
-const SLOT = 1.5;
+const DEMO = "https://faisalmt3.github.io/demos/";
+// Ring order: real work first, then the spec designs. [image, name, kind, link]; no link = a demo page of the same name.
+const WORK = [
+  ["tamwil-dashboard", "قسطي", "نظام تقسيط يعمل فعليًا", "#tamwil"],
+  ["aurum-desktop", "أوروم فالي", "موقع شركة، عمل مدفوع لعميل", "#aurum"],
+  ["workflow", "تذكير المدفوعات بواتساب", "أتمتة", "#whatsapp"],
+  ["booking-bot", "بوت حجز المواعيد", "نسخة تجريبية تشتغل", "#bot"],
+  ["winboost", "WinBoost", "أداة تسريع ويندوز", "#winboost"],
+  ["wallet-cards", "بطاقات أدعية للمحفظة", "عمل مدفوع لعميل", "#cards"],
+  ["riyadh-palace", "قصر الرياض للاحتفالات", "تصميم مقترح: قاعة أفراح"],
+  ["hdb-halls", "قاعات هدب", "تصميم مقترح: قاعات احتفالات ومؤتمرات"],
+  ["lana-clinics", "لنا كلينك", "تصميم مقترح: عيادة أسنان وجلدية"],
+  ["glance", "مركز قلانس", "تصميم مقترح: مركز تزيين نسائي"],
+  ["qasr-al-maha", "قصر المها للاحتفالات", "تصميم مقترح: قاعة أفراح"],
+  ["amy-rose", "إيمي روز للأثاث", "تصميم مقترح: طاولات على المقاس"],
+  ["panorama-hall", "قاعة بانوراما", "تصميم مقترح: قاعة أفراح"],
+  ["muhit-alshamal", "محيط الشمال", "تصميم مقترح: مركز صيانة سيارات"],
+  ["nasiriyah-hall", "قاعة الناصرية", "تصميم مقترح: قاعة أفراح"],
+  ["care-freshness", "مجمع عناية ونضارة", "تصميم مقترح: مجمع طبي"],
+].map(([slug, name, kind, href]) => ({ name, kind, href: href || DEMO + slug + "/", spec: !href, img: `assets/ring/${slug}.webp` }));
 
-const tiles = document.getElementById("tiles");
-for (const [slug, [name, kind, line, h, w]] of Object.entries(WORK)) {
-  tiles.insertAdjacentHTML("beforeend", `
-    <a class="tile ${w}" href="https://faisalmt3.github.io/demos/${slug}/" target="_blank" rel="noopener">
-      <div class="frame"><img src="assets/work/${slug}.webp" width="720" height="${h}" loading="lazy" alt="الصفحة الكاملة لتصميم ${name}"></div>
-      <div class="cap"><div><h3>${name}</h3><p>${kind} · ${line}</p></div><span class="go">افتح التصميم<svg class="icon" aria-hidden="true"><use href="#i-out"/></svg></span></div>
-    </a>`);
+const $ = (s, el = document) => el.querySelector(s), $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches, touch = matchMedia("(hover: none)").matches;
+const root = document.documentElement, hero = $(".hero"), canvas = $("#fx");
+
+$("#cx").innerHTML = WORK.filter(w => w.spec).map(w => `<a class="cx" href="${w.href}" target="_blank" rel="noopener"><img src="${w.img}" width="960" height="600" loading="lazy" alt="تصميم ${w.name}"><b>${w.name}</b><span>${w.kind.replace("تصميم مقترح: ", "")}</span></a>`).join("");
+const words = ["مواقع للأنشطة", "أنظمة تقسيط", "تذكير واتساب", "بوت حجز", "بطاقات المحفظة", "تسريع ويندوز"];
+$$(".mq-in").forEach((row, r) => { const one = (r ? [...words].reverse() : words).map(w => `<span dir="rtl">${w}</span><i></i>`).join(""); row.innerHTML = one + one; });
+
+gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({ ignoreMobileResize: true });
+
+// Hero ring. This script owns the scroll (state.p), assets/js/ring.js only draws it.
+const state = { p: 0 };
+const webgl = (() => { try { const c = document.createElement("canvas"); return !!(c.getContext("webgl2") || c.getContext("webgl")); } catch { return false; } })();
+if (!webgl) root.classList.add("no-fx");
+else {
+  const copy = $(".hero-in"), hint = $(".hint"), cap = $("#cap");
+  const show = (el, o) => { el.style.opacity = o; el.style.visibility = o < .01 ? "hidden" : "visible"; };
+  const ss = (a, b, x) => { x = Math.min(Math.max((x - a) / (b - a), 0), 1); return x * x * (3 - 2 * x); };
+  let shown = -1;
+  const onFront = (i, p) => {
+    const out = ss(0, .09, p); show(copy, 1 - out); copy.style.transform = `translateY(${-70 * out}px)`; show(hint, 1 - out); show(cap, ss(.1, .16, p));
+    if (i === shown) return; shown = i; const w = WORK[i], go = $("#cap-go");
+    $("#cap-name").textContent = w.name; $("#cap-kind").textContent = w.kind; $("#cap-n").textContent = `${String(i + 1).padStart(2, "0")} / ${WORK.length}`;
+    $("#cap-label").textContent = w.spec ? "افتح التصميم" : "التفاصيل"; go.href = w.href;
+    if (w.spec) { go.target = "_blank"; go.rel = "noopener"; } else { go.removeAttribute("target"); go.removeAttribute("rel"); }
+    if (!reduced) gsap.fromTo("#cap > b, #cap > span, #cap > small", { y: 14, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .45, ease: "power3.out", stagger: .04, overwrite: true });
+  };
+  onFront(0, 0);
+  let pin;
+  if (!reduced) pin = ScrollTrigger.create({ trigger: hero, pin: true, start: "top top", end: "+=440%", scrub: .7, animation: gsap.to(state, { p: 1, ease: "none" }) });
+  import("./assets/js/ring.js").then(m => m.default({ canvas, hero, state, WORK, reduced, onFront }))
+    .catch(e => { console.error("ring: " + (e && e.message || e)); pin?.kill(true); root.classList.add("no-fx"); show(copy, 1); copy.style.transform = ""; ScrollTrigger.refresh(); });
 }
 
-const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-const video = document.getElementById("reel");
-if (reduced) { video.removeAttribute("autoplay"); video.pause(); }
-const nameEl = document.getElementById("reel-name"), kindEl = document.getElementById("reel-kind");
-const sync = () => {
-  const slug = REEL[Math.floor(video.currentTime / SLOT) % REEL.length];
-  const [name, kind] = slug === "tamwil" ? ["قسطي", "لوحة تحكم المعرض"] : [WORK[slug][0], "تصميم مقترح: " + WORK[slug][1]];
-  if (nameEl.textContent !== name) { nameEl.textContent = name; kindEl.textContent = kind; }
-};
-// Frame-accurate where supported; timeupdate (about 4 Hz) elsewhere.
-if ("requestVideoFrameCallback" in video) { const tick = () => { sync(); video.requestVideoFrameCallback(tick); }; video.requestVideoFrameCallback(tick); }
-else video.addEventListener("timeupdate", sync);
+if (!reduced) {
+  // Load: the headline rises out of its own line
+  gsap.from(".hero h1 .ln > span", { yPercent: 118, duration: 1.2, ease: "expo.out", stagger: .13, delay: .2 });
+  gsap.from(".sub, .ctas, .hint", { autoAlpha: 0, y: 26, duration: 1, ease: "power3.out", stagger: .1, delay: .75 });
 
-// Touch screens have no hover: play the page scroll while a tile sits mid-screen.
-if (!reduced && matchMedia("(hover: none)").matches) {
-  const io = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle("play", e.isIntersecting)), { rootMargin: "-35% 0px -35% 0px" });
-  document.querySelectorAll(".tile").forEach(t => io.observe(t));
+  // Marquee: two rows in opposite directions, scrolling makes them rush
+  const rows = $$(".mq-in").map((el, i) => gsap.fromTo(el, { xPercent: i ? -50 : 0 }, { xPercent: i ? 0 : -50, duration: 36, ease: "none", repeat: -1 }));
+  const page = ScrollTrigger.create({ start: 0, end: "max" });
+  let ts = 1;
+  gsap.ticker.add(() => { ts += (1 + Math.min(Math.abs(page.getVelocity()) / 260, 9) - ts) * .07; rows.forEach(t => t.timeScale(ts)); });
+
+  // Works: the shot opens like a shutter, the picture drifts inside it, the card tilts under the pointer
+  $$(".work").forEach(w => {
+    const shot = $(".shot", w), inn = $(".shot-in", w), img = $("img", inn), phone = $(".phone", w);
+    gsap.fromTo(inn, { clipPath: "inset(20% 13% 20% 13% round 28px)", scale: .9 }, { clipPath: "inset(0% 0% 0% 0% round 14px)", scale: 1, ease: "none", scrollTrigger: { trigger: inn, start: "top 95%", end: "top 45%", scrub: .5 } });
+    if (!inn.classList.contains("full")) gsap.fromTo(img, { yPercent: -12 }, { yPercent: 0, ease: "none", scrollTrigger: { trigger: inn, start: "top bottom", end: "bottom top", scrub: true } });
+    if (phone) gsap.fromTo(phone, { y: 90 }, { y: -20, ease: "none", scrollTrigger: { trigger: inn, start: "top 80%", end: "bottom 20%", scrub: .6 } });
+    gsap.from($$(".work-txt > *", w), { y: 44, autoAlpha: 0, duration: 1, ease: "power3.out", stagger: .08, scrollTrigger: { trigger: $(".work-txt", w), start: "top 78%" } });
+    if (touch) return;
+    gsap.set(shot, { transformPerspective: 1100 });
+    const rx = gsap.quickTo(shot, "rotationX", { duration: .6, ease: "power3" }), ry = gsap.quickTo(shot, "rotationY", { duration: .6, ease: "power3" });
+    shot.addEventListener("pointermove", e => {
+      const r = shot.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+      ry(x * 14); rx(-y * 9); shot.style.setProperty("--gx", (x + .5) * 100 + "%"); shot.style.setProperty("--gy", (y + .5) * 100 + "%");
+    });
+    shot.addEventListener("pointerleave", () => { rx(0); ry(0); });
+  });
+
+  // Reminder schedule: a light travels the line and switches each step on as it passes
+  const track = $("#track"), steps = $$("li", track);
+  ScrollTrigger.create({ trigger: track, start: "top 82%", end: "top 40%", scrub: .4,
+    onUpdate: s => { track.style.setProperty("--p", s.progress); steps.forEach((li, i) => li.classList.toggle("on", s.progress >= i / steps.length - .001)); } });
+  gsap.from(".rules li, .msg", { y: 40, autoAlpha: 0, duration: .9, ease: "power3.out", stagger: .1, scrollTrigger: { trigger: ".wa-split", start: "top 80%" } });
+
+  // Concepts: with a mouse the page pins and the strip slides sideways (RTL: it travels right). Touch screens swipe it natively.
+  if (!touch) {
+    const strip = $("#cx"), dist = () => strip.scrollWidth - innerWidth;
+    $(".concepts").classList.add("pinned");
+    gsap.to(strip, { x: dist, ease: "none", scrollTrigger: { trigger: ".concepts", pin: true, start: "top top", end: () => "+=" + dist(), scrub: .6, invalidateOnRefresh: true,
+      onUpdate: s => gsap.to(".cx img", { skewX: gsap.utils.clamp(-7, 7, s.getVelocity() / -260), duration: .5, overwrite: true }) } });
+  }
+
+  $$(".way li").forEach(li => gsap.from(li.children, { y: 34, autoAlpha: 0, duration: .9, ease: "power3.out", stagger: .1, scrollTrigger: { trigger: li, start: "top 85%" } }));
+  gsap.from(".contact h2", { yPercent: 45, scale: .82, autoAlpha: 0, transformOrigin: "100% 100%", ease: "none", scrollTrigger: { trigger: ".contact", start: "top 85%", end: "top 30%", scrub: .5 } });
 }
+else $$("#track li").forEach(li => li.classList.add("on"));
+window.__ready = true;
 </script>
 </body>
 </html>

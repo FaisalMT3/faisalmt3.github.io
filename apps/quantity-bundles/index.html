@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>باقات الكمية | تطبيق لمتاجر سلة</title>
+<meta name="description" content="تطبيق لمتاجر سلة يعرض خصم الكميات كباقات واضحة داخل صفحة المنتج. العميل يرى السعر والتوفير ويختار بضغطة، وسلة تطبّق الخصم في السلة.">
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F3EEE2;--fg:#1B1A17;--mut:#5F5B52;--acc:#1F4D3F;--win:#FBF8F1;--line:rgb(27 26 23/.16)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--fg);font-family:Alexandria,system-ui,sans-serif;line-height:1.8}
+a{color:var(--acc)}
+.wrap{max-width:1040px;margin:auto;padding:0 20px}
+header{display:flex;align-items:center;gap:12px;padding:20px 0}
+header img{width:44px;height:44px;border-radius:11px}
+header b{font-size:18px}
+header nav{margin-inline-start:auto;display:flex;gap:18px;font-size:15px}
+header nav a{text-decoration:none;color:var(--mut)}
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;padding:40px 0 60px}
+h1{font-size:clamp(30px,5vw,48px);line-height:1.4}
+h1 em{font-style:normal;color:var(--acc)}
+.lead{font-size:18px;color:var(--mut);margin:16px 0 26px}
+.btn{display:inline-block;background:var(--acc);color:#fff;text-decoration:none;font-weight:500;padding:14px 26px;border-radius:10px;min-height:48px}
+.btn:focus-visible,a:focus-visible{outline:3px solid var(--fg);outline-offset:3px}
+.note{font-size:14px;color:var(--mut);margin-top:10px}
+.hero img{width:100%;max-width:380px;height:auto;justify-self:center;border-radius:14px;border:1px solid var(--line);box-shadow:0 24px 50px rgb(60 50 30/.16)}
+h2{font-size:28px;margin:0 0 20px}
+section{padding:44px 0;border-top:1px solid var(--line)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;list-style:none;padding:0;counter-reset:s}
+.steps li{background:var(--win);border:1px solid var(--line);border-radius:12px;padding:22px;counter-increment:s}
+.steps li:before{content:counter(s);display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--acc);color:#fff;font-weight:700;margin-bottom:12px}
+.steps b{display:block;margin-bottom:6px}
+.steps span{color:var(--mut);font-size:15px}
+.price{background:var(--win);border:1px solid var(--line);border-radius:12px;padding:26px;max-width:420px}
+.price b{font-size:38px}.price small{color:var(--mut);font-size:15px}
+details{background:var(--win);border:1px solid var(--line);border-radius:10px;padding:16px 20px;margin-bottom:10px}
+summary{cursor:pointer;font-weight:500}
+details p{color:var(--mut);margin-top:10px}
+footer{padding:30px 0 50px;color:var(--mut);font-size:14px;border-top:1px solid var(--line);display:flex;gap:18px;flex-wrap:wrap}
+@media (max-width:760px){.hero{grid-template-columns:1fr;padding-top:10px}.steps{grid-template-columns:1fr}header nav{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><img src="logo.png" alt=""><b>باقات الكمية</b>
+  <nav><a href="#how">طريقة العمل</a><a href="#price">السعر</a><a href="#faq">الأسئلة الشائعة</a><a href="#support">الدعم</a></nav></header>
+
+<main>
+<div class="hero">
+  <div>
+    <h1>اعرض خصم الكميات كـ<em>باقات واضحة</em> داخل صفحة المنتج</h1>
+    <p class="lead">تطبيق لمتاجر سلة. العميل يرى سعر كل باقة ومقدار التوفير ويختار بضغطة واحدة، وسلة تطبّق الخصم في السلة.</p>
+    <a class="btn" href="https://apps.salla.sa/ar">ثبّته من متجر تطبيقات سلة</a>
+    <p class="note">تجربة مجانية 7 أيام.</p>
+  </div>
+  <img src="shot.png" width="420" height="660" alt="صفحة منتج فيها ثلاث باقات: قطعتان بخصم 10%، 3 قطع بخصم 15%، 5 قطع بخصم 25%، مع سعر كل باقة ومقدار التوفير">
+</div>
+
+<section id="how">
+  <h2>طريقة العمل</h2>
+  <ol class="steps">
+    <li><b>ثبّت التطبيق</b><span>من متجر تطبيقات سلة. لا يحتاج ربطاً ولا أكواداً.</span></li>
+    <li><b>أنشئ عرض «جدول الخصومات»</b><span>من لوحة تحكم سلة: التسويق، ثم العروض الترويجية، ثم عرض جديد. اختر المنتجات والكميات ونسب الخصم وفعّل العرض.</span></li>
+    <li><b>الباقات تظهر تلقائياً</b><span>في صفحات المنتجات المشمولة بالعرض، وبلون متجرك. تستطيع تغيير العنوان والشارة واللون من إعدادات التطبيق.</span></li>
+  </ol>
+</section>
+
+<section id="price">
+  <h2>السعر</h2>
+  <div class="price"><b>19 ر.س</b> <small>شهرياً، أو 190 ر.س سنوياً</small>
+    <p class="note">الاشتراك والدفع عن طريق متجر تطبيقات سلة، مع تجربة مجانية 7 أيام.</p></div>
+</section>
+
+<section id="faq">
+  <h2>الأسئلة الشائعة</h2>
+  <details><summary>هل التطبيق هو الذي يحسب الخصم؟</summary><p>لا. الخصم يطبّقه نظام سلة نفسه عن طريق عرض «جدول الخصومات» الذي تنشئه في لوحة التحكم. التطبيق يعرض هذا العرض كباقات ويضبط الكمية عند اختيار العميل، لذلك السعر الظاهر في الباقة هو نفسه في السلة.</p></details>
+  <details><summary>أين تظهر الباقات؟</summary><p>في صفحة المنتج، فوق خانة الكمية وزر الإضافة للسلة، وفقط في المنتجات التي يشملها عرض «جدول الخصومات» المفعّل.</p></details>
+  <details><summary>هل أحتاج باقة معيّنة من سلة؟</summary><p>تحتاج أن تكون «العروض الترويجية» متاحة في باقة متجرك، لأن التطبيق يعتمد عليها.</p></details>
+  <details><summary>لم تظهر الباقات، ماذا أفعل؟</summary><p>تأكد أن العرض من نوع «جدول الخصومات»، وأنه مفعّل وتاريخ بدايته قد حان، وأن المنتج ضمن منتجات العرض. إن استمرت المشكلة راسلنا وسنرد خلال يوم عمل.</p></details>
+  <details><summary>هل يعمل مع كل الثيمات؟</summary><p>يعمل مع ثيمات سلة المبنية على Twilight، وهي الثيمات الحالية في سلة. إن كان ثيمك مخصصاً ولم تظهر الباقات راسلنا لنضبطها.</p></details>
+  <details><summary>هل يجمع التطبيق بيانات عملائي؟</summary><p>لا. التفاصيل في <a href="privacy.html">سياسة الخصوصية</a>.</p></details>
+  <details><summary>كيف ألغي الاشتراك؟</summary><p>من لوحة تحكم سلة: تطبيقاتي، ثم التطبيق، ثم إلغاء الاشتراك. تختفي الباقات من المتجر مباشرة ويبقى عرض الخصم يعمل كما هو.</p></details>
+</section>
+
+<section id="support">
+  <h2>الدعم</h2>
+  <p>راسلنا على <a href="mailto:faisalfahadmt3@gmail.com">faisalfahadmt3@gmail.com</a>. نرد خلال يوم عمل واحد.</p>
+</section>
+</main>
+
+<footer><span>باقات الكمية، من تطوير فيصل فهد المطيري</span><a href="privacy.html">سياسة الخصوصية</a><a href="#faq">الأسئلة الشائعة</a></footer>
+</div>
+</body>
+</html>
